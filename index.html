@@ -309,5 +309,64 @@
     </footer>
   </div>
 </body>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const spinButton = document.querySelector('.spin');
+    const turboButton = document.querySelector('.turbo-spin');
+    const autoplayButton = document.querySelector('.autoplay');
+    const reels = document.querySelector('.reels');
+    let turboMode = false;
+    let isSpinning = false;
+    let autoplayMode = false;
+    let spinInterval;
+
+    const symbols = Array.from(reels.children);
+
+    function spinReels() {
+      isSpinning = true;
+      symbols.forEach(symbol => {
+        const randomIndex = Math.floor(Math.random() * symbols.length);
+        reels.appendChild(symbols[randomIndex]);
+      });
+      
+      // Simular animación de giro
+      reels.style.transition = turboMode ? 'transform 0.5s ease' : 'transform 2s ease';
+      reels.style.transform = `translateY(-${Math.floor(Math.random() * 100)}%)`;
+
+      setTimeout(() => {
+        reels.style.transition = '';
+        reels.style.transform = '';
+        isSpinning = false;
+
+        if (autoplayMode) {
+          spinReels();
+        }
+      }, turboMode ? 500 : 2000);
+    }
+
+    spinButton.addEventListener('click', () => {
+      if (!isSpinning) {
+        spinReels();
+      }
+    });
+
+    turboButton.addEventListener('click', () => {
+      turboMode = !turboMode;
+      turboButton.classList.toggle('active', turboMode);
+    });
+
+    autoplayButton.addEventListener('click', () => {
+      autoplayMode = !autoplayMode;
+      autoplayButton.classList.toggle('active', autoplayMode);
+
+      if (autoplayMode && !isSpinning) {
+        spinReels();
+      } else {
+        clearInterval(spinInterval);
+      }
+    });
+  });
+</script>
+
 
 </html>
