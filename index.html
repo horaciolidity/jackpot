@@ -125,8 +125,8 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      transition: transform 1s ease-out;
-    }
+      height: 300px; /* Asegúrate de que esto sea suficiente para mostrar el efecto */
+      overflow: hidden; /* Ocultar el contenido que sale del contenedor */
 
     .reel img {
       border: 2px solid #ffd700;
@@ -346,22 +346,23 @@
       const reels = document.querySelectorAll('.reel');
 
       reels.forEach((reel, index) => {
-        // Velocidades aleatorias entre 2 y 4 segundos
+        // Velocidad aleatoria entre 2 y 4 segundos
         const spinDuration = Math.random() * 2 + 2;
         // Desplazamiento mayor para simular más vueltas
         const reelHeight = reel.scrollHeight;
-        const spinHeight = reelHeight * 5;
-
-        // Posición final aleatoria dentro de las opciones disponibles
-        const finalPosition = Math.floor(Math.random() * (reelHeight / 50)) * 50;
+        const spinHeight = reelHeight * 3;
         
+        // Posición final aleatoria dentro de las opciones disponibles
+        const finalPosition = Math.floor(Math.random() * 7) * 100; // Ajusta según la altura de los símbolos
+
+        // Configuración de animación
         reel.style.transition = `transform ${spinDuration}s cubic-bezier(0.25, 0.1, 0.25, 1)`;
         reel.style.transform = `translateY(-${spinHeight + finalPosition}px)`;
-
+        
         // Restablecer la posición después de la animación
         setTimeout(() => {
           reel.style.transition = 'none';
-          reel.style.transform = `translateY(${finalPosition}px)`;
+          reel.style.transform = `translateY(-${finalPosition}px)`;
         }, spinDuration * 1000);
       });
     });
