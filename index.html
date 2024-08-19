@@ -354,53 +354,56 @@
 
 </body>
   <script>
-  const reels = document.querySelectorAll('.reel');
-const spinButton = document.querySelector('.spin-button');
-const numSpins = 10; // Número de giros completos antes de detenerse
+ document.addEventListener('DOMContentLoaded', function() {
+    const reels = document.querySelectorAll('.reel');
+    const spinButton = document.querySelector('.spin');
 
-function spinReel(reel, spinDuration) {
-    return new Promise(resolve => {
-        let totalSpins = numSpins * reel.children.length; // Número total de giros basados en el número de imágenes
-        let currentSpin = 0;
-        let reelHeight = reel.scrollHeight;
-        let singleImageHeight = reelHeight / reel.children.length;
-        let startTime = null;
+    const numSpins = 10; // Número de giros completos antes de detenerse
 
-        function spin(timestamp) {
-            if (!startTime) startTime = timestamp;
-            let progress = timestamp - startTime;
-            let spinProgress = Math.min(progress / spinDuration, 1);
+    function spinReel(reel, spinDuration) {
+        return new Promise(resolve => {
+            let totalSpins = numSpins * reel.children.length; // Número total de giros basados en el número de imágenes
+            let currentSpin = 0;
+            let reelHeight = reel.scrollHeight;
+            let singleImageHeight = reelHeight / reel.children.length;
+            let startTime = null;
 
-            // Calcular la posición actual del scroll basado en el progreso
-            let scrollPosition = (reelHeight * spinProgress) % reelHeight;
-            reel.scrollTop = scrollPosition;
+            function spin(timestamp) {
+                if (!startTime) startTime = timestamp;
+                let progress = timestamp - startTime;
+                let spinProgress = Math.min(progress / spinDuration, 1);
 
-            if (currentSpin < totalSpins) {
-                currentSpin += 1;
-                requestAnimationFrame(spin);
-            } else {
-                // Alinear la columna al final del giro
-                let finalPosition = (scrollPosition % singleImageHeight);
-                reel.scrollTop -= finalPosition;
-                resolve();
+                // Calcular la posición actual del scroll basado en el progreso
+                let scrollPosition = ((currentSpin + spinProgress) * singleImageHeight) % reelHeight;
+                reel.style.transform = `translateY(-${scrollPosition}px)`;
+
+                if (spinProgress < 1) {
+                    requestAnimationFrame(spin);
+                } else {
+                    currentSpin++;
+                    if (currentSpin < totalSpins) {
+                        startTime = null; // Resetear el tiempo de inicio
+                        requestAnimationFrame(spin);
+                    } else {
+                        resolve();
+                    }
+                }
             }
+
+            requestAnimationFrame(spin);
+        });
+    }
+
+    async function spinAllReels() {
+        const spinDuration = 2000; // Duración de cada giro en milisegundos
+        for (const reel of reels) {
+            await spinReel(reel, spinDuration);
         }
+    }
 
-        requestAnimationFrame(spin);
-    });
-}
-
-spinButton.addEventListener('click', () => {
-    let spinPromises = [];
-    reels.forEach((reel, index) => {
-        let spinDuration = 2000 + (index * 500); // Incremento de duración para cada columna
-        spinPromises.push(spinReel(reel, spinDuration));
-    });
-
-    Promise.all(spinPromises).then(() => {
-        console.log('All reels have stopped spinning.');
-    });
+    spinButton.addEventListener('click', spinAllReels);
 });
+
 
   </script>
 </html>
