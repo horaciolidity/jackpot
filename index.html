@@ -121,13 +121,12 @@
       position: relative;
     }
 
-    .reel {
+       .reel {
       flex: 1;
       display: flex;
       flex-direction: column;
-      height: 300px; /* Asegúrate de que esto sea suficiente para mostrar el efecto */
-      overflow: hidden; /* Ocultar el contenido que sale del contenedor */
-
+      transition: transform 1s ease-out;
+    }
     .reel img {
       border: 2px solid #ffd700;
       border-radius: 5px;
