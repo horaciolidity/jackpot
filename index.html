@@ -352,27 +352,18 @@
   </div>
 
   <script>
-    document.querySelector(".spin").addEventListener("click", function () {
+   document.querySelector(".spin").addEventListener("click", function () {
       const reels = document.querySelectorAll(".reel");
-      const reelHeight = reels[0].clientHeight;
       const symbolHeight = reels[0].querySelector("img").clientHeight;
-      const symbolsPerReel = reels[0].children.length;
-      const totalHeight = symbolHeight * symbolsPerReel;
+      const totalSymbols = reels[0].children.length;
+      const spinDurationBase = 1.5; // Duración base del giro
 
       reels.forEach((reel, index) => {
-        const spinDuration = 2 + Math.random() * 2; // Random duration between 2 and 4 seconds
-        const spinTimes = 4 + Math.floor(Math.random() * 3); // Spin between 4 and 6 times
-        const randomShift = Math.floor(Math.random() * symbolsPerReel) * symbolHeight;
-        const finalShift = totalHeight * spinTimes + randomShift;
+        const randomDuration = spinDurationBase + Math.random() * 1.5; // Duración aleatoria entre 1.5 y 3 segundos
+        const randomStop = Math.floor(Math.random() * totalSymbols) * symbolHeight;
 
-        reel.style.transition = `transform ${spinDuration}s cubic-bezier(0.25, 1, 0.5, 1)`;
-        reel.style.transform = `translateY(-${finalShift}px)`;
-
-        setTimeout(() => {
-          // Reset the position to simulate infinite loop
-          reel.style.transition = "none";
-          reel.style.transform = `translateY(-${randomShift}px)`;
-        }, spinDuration * 1000);
+        reel.style.transition = `transform ${randomDuration}s cubic-bezier(0.25, 1, 0.5, 1)`;
+        reel.style.transform = `translateY(-${randomStop}px)`;
       });
     });
   </script>
