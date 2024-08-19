@@ -343,29 +343,30 @@
   </div>
 </body>
   <script>
- document.querySelector('.spin').addEventListener('click', () => {
+  document.querySelector('.spin').addEventListener('click', () => {
       const reels = document.querySelectorAll('.reel');
 
-      reels.forEach((reel, index) => {
-        // Velocidad aleatoria entre 2 y 4 segundos
-        const spinDuration = Math.random() * 2 + 2;
-        // Desplazamiento mayor para simular más vueltas
-        const reelHeight = reel.scrollHeight;
-        const spinHeight = reelHeight * 3;
-        
-        // Posición final aleatoria dentro de las opciones disponibles
-        const finalPosition = Math.floor(Math.random() * 7) * 100; // Ajusta según la altura de los símbolos
+      reels.forEach((reel) => {
+        // Restablecer transición
+        reel.style.transition = 'none';
+        reel.style.transform = 'translateY(0px)';
 
-        // Configuración de animación
+        // Configuración de animación infinita
+        const spinDuration = 5; // Duración en segundos
         reel.style.transition = `transform ${spinDuration}s cubic-bezier(0.25, 0.1, 0.25, 1)`;
-        reel.style.transform = `translateY(-${spinHeight + finalPosition}px)`;
-        
-        // Restablecer la posición después de la animación
-        setTimeout(() => {
-          reel.style.transition = 'none';
-          reel.style.transform = `translateY(-${finalPosition}px)`;
-        }, spinDuration * 1000);
+        reel.style.transform = `translateY(-${reel.scrollHeight}px)`;
       });
+
+      // Detener la animación y ajustar a una posición final aleatoria después de un tiempo
+      setTimeout(() => {
+        reels.forEach((reel) => {
+          // Detener animación
+          reel.style.transition = 'none';
+          const reelHeight = reel.scrollHeight;
+          const finalPosition = Math.floor(Math.random() * 7) * 100; // Ajusta según la altura de los símbolos
+          reel.style.transform = `translateY(-${finalPosition}px)`;
+        });
+      }, 5000); // Ajusta el tiempo de animación según tus necesidades
     });
 </script>
 </html>
