@@ -111,21 +111,24 @@
       border-radius: 10px;
       padding: 10px;
       position: relative;
-      overflow: visible; /* Add this to hide overflowing content */
+      overflow: hidden; /* Updated to hide overflow */
+      height: 300px; /* Set a fixed height to show reels spinning */
     }
 
     .reels {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      grid-template-rows: repeat(3, 1fr);
-      gap: 5px;
-      background-color: rgba(245, 230, 211, 0.2);
-      border-radius: 5px;
-      padding: 10px;
-      margin-bottom: 0; /* Remove negative margin */
+      display: flex;
+      overflow: hidden;
+      position: relative;
     }
 
-    .reel-symbol {
+    .reel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      transition: transform 1s ease-out;
+    }
+
+    .reel img {
       border: 2px solid #ffd700;
       border-radius: 5px;
       aspect-ratio: 1 / 1;
@@ -264,21 +267,51 @@
     </header>
     <div class="slot-machine">
       <div class="reels">
-        <img src="https://jackpot-peach.vercel.app/img1.png" class="reel-symbol" alt="Symbol 1">
-        <img src="https://jackpot-peach.vercel.app/img2.png" class="reel-symbol" alt="Symbol 2">
-        <img src="https://jackpot-peach.vercel.app/img3.png" class="reel-symbol" alt="Symbol 3">
-        <img src="https://jackpot-peach.vercel.app/img4.png" class="reel-symbol" alt="Symbol 4">
-        <img src="https://jackpot-peach.vercel.app/img5.png" class="reel-symbol" alt="Symbol 5">
-        <img src="https://jackpot-peach.vercel.app/img6.png" class="reel-symbol" alt="Symbol 6">
-        <img src="https://jackpot-peach.vercel.app/img7.png" class="reel-symbol" alt="Symbol 7">
-        <img src="https://jackpot-peach.vercel.app/img8.png" class="reel-symbol" alt="Symbol 8">
-        <img src="https://jackpot-peach.vercel.app/img1.png" class="reel-symbol" alt="Symbol 1">
-        <img src="https://jackpot-peach.vercel.app/img2.png" class="reel-symbol" alt="Symbol 2">
-        <img src="https://jackpot-peach.vercel.app/img3.png" class="reel-symbol" alt="Symbol 3">
-        <img src="https://jackpot-peach.vercel.app/img4.png" class="reel-symbol" alt="Symbol 4">
-        <img src="https://jackpot-peach.vercel.app/img5.png" class="reel-symbol" alt="Symbol 5">
-        <img src="https://jackpot-peach.vercel.app/img6.png" class="reel-symbol" alt="Symbol 6">
-        <img src="https://jackpot-peach.vercel.app/img7.png" class="reel-symbol" alt="Symbol 7">
+        <div class="reel">
+          <img src="https://jackpot-peach.vercel.app/img1.png" class="reel-symbol" alt="Symbol 1">
+          <img src="https://jackpot-peach.vercel.app/img2.png" class="reel-symbol" alt="Symbol 2">
+          <img src="https://jackpot-peach.vercel.app/img3.png" class="reel-symbol" alt="Symbol 3">
+          <img src="https://jackpot-peach.vercel.app/img4.png" class="reel-symbol" alt="Symbol 4">
+          <img src="https://jackpot-peach.vercel.app/img5.png" class="reel-symbol" alt="Symbol 5">
+          <img src="https://jackpot-peach.vercel.app/img6.png" class="reel-symbol" alt="Symbol 6">
+          <img src="https://jackpot-peach.vercel.app/img7.png" class="reel-symbol" alt="Symbol 7">
+        </div>
+        <div class="reel">
+          <img src="https://jackpot-peach.vercel.app/img1.png" class="reel-symbol" alt="Symbol 1">
+          <img src="https://jackpot-peach.vercel.app/img2.png" class="reel-symbol" alt="Symbol 2">
+          <img src="https://jackpot-peach.vercel.app/img3.png" class="reel-symbol" alt="Symbol 3">
+          <img src="https://jackpot-peach.vercel.app/img4.png" class="reel-symbol" alt="Symbol 4">
+          <img src="https://jackpot-peach.vercel.app/img5.png" class="reel-symbol" alt="Symbol 5">
+          <img src="https://jackpot-peach.vercel.app/img6.png" class="reel-symbol" alt="Symbol 6">
+          <img src="https://jackpot-peach.vercel.app/img7.png" class="reel-symbol" alt="Symbol 7">
+        </div>
+        <div class="reel">
+          <img src="https://jackpot-peach.vercel.app/img1.png" class="reel-symbol" alt="Symbol 1">
+          <img src="https://jackpot-peach.vercel.app/img2.png" class="reel-symbol" alt="Symbol 2">
+          <img src="https://jackpot-peach.vercel.app/img3.png" class="reel-symbol" alt="Symbol 3">
+          <img src="https://jackpot-peach.vercel.app/img4.png" class="reel-symbol" alt="Symbol 4">
+          <img src="https://jackpot-peach.vercel.app/img5.png" class="reel-symbol" alt="Symbol 5">
+          <img src="https://jackpot-peach.vercel.app/img6.png" class="reel-symbol" alt="Symbol 6">
+          <img src="https://jackpot-peach.vercel.app/img7.png" class="reel-symbol" alt="Symbol 7">
+        </div>
+        <div class="reel">
+          <img src="https://jackpot-peach.vercel.app/img1.png" class="reel-symbol" alt="Symbol 1">
+          <img src="https://jackpot-peach.vercel.app/img2.png" class="reel-symbol" alt="Symbol 2">
+          <img src="https://jackpot-peach.vercel.app/img3.png" class="reel-symbol" alt="Symbol 3">
+          <img src="https://jackpot-peach.vercel.app/img4.png" class="reel-symbol" alt="Symbol 4">
+          <img src="https://jackpot-peach.vercel.app/img5.png" class="reel-symbol" alt="Symbol 5">
+          <img src="https://jackpot-peach.vercel.app/img6.png" class="reel-symbol" alt="Symbol 6">
+          <img src="https://jackpot-peach.vercel.app/img7.png" class="reel-symbol" alt="Symbol 7">
+        </div>
+        <div class="reel">
+          <img src="https://jackpot-peach.vercel.app/img1.png" class="reel-symbol" alt="Symbol 1">
+          <img src="https://jackpot-peach.vercel.app/img2.png" class="reel-symbol" alt="Symbol 2">
+          <img src="https://jackpot-peach.vercel.app/img3.png" class="reel-symbol" alt="Symbol 3">
+          <img src="https://jackpot-peach.vercel.app/img4.png" class="reel-symbol" alt="Symbol 4">
+          <img src="https://jackpot-peach.vercel.app/img5.png" class="reel-symbol" alt="Symbol 5">
+          <img src="https://jackpot-peach.vercel.app/img6.png" class="reel-symbol" alt="Symbol 6">
+          <img src="https://jackpot-peach.vercel.app/img7.png" class="reel-symbol" alt="Symbol 7">
+        </div>
       </div>
     </div>
     <footer>
@@ -289,94 +322,43 @@
           <button class="sound">🔊</button>
         </div>
         <div class="center-controls">
-          <div class="balance-bet">
-            <div class="credit">CREDIT $100,000.00</div>
-            <div class="bet">BET $0.25</div>
-          </div>
           <div class="spin-controls">
-          <button class="turbo-spin">TURBO</button>
-          <button class="autoplay">AUTOPLAY</button>
+            <button class="decrease-bet">-</button>
+            <div class="bet">$5.00</div>
+            <button class="increase-bet">+</button>
+          </div>
+          <button class="spin">SPIN</button>
+          <div class="balance-bet">
+            <div class="credit">Credit: $100.00</div>
+            <div class="bet">Bet: $5.00</div>
           </div>
         </div>
         <div class="right-controls">
-
-          
-                      <button class="decrease-bet">-</button>
-            <button class="spin">SPIN</button>
-            <button class="increase-bet">+</button>
+          <button class="turbo-spin">Turbo Spin</button>
+          <button class="autoplay">Autoplay</button>
         </div>
       </div>
     </footer>
   </div>
 </body>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const spinButton = document.querySelector('.spin');
-    const turboButton = document.querySelector('.turbo-spin');
-    const autoplayButton = document.querySelector('.autoplay');
-    const reels = document.querySelectorAll('.reels');
-    let turboMode = false;
-    let isSpinning = false;
-    let autoplayMode = false;
-    let spinInterval;
+  <script>
+document.querySelector('.spin').addEventListener('click', () => {
+  const reels = document.querySelectorAll('.reel');
+  
+  reels.forEach((reel, index) => {
+    // Diferentes velocidades para cada carrete
+    const spinDuration = 1 + Math.random() * 2; // Velocidad aleatoria entre 1 y 3 segundos
+    const spinHeight = reel.clientHeight * 3; // Desplazamiento mayor para simular más vueltas
 
-    function getRandomSymbols(symbols, column) {
-        // Reordenar símbolos aleatoriamente en cada columna
-        let shuffledSymbols = Array.from(symbols[column]);
-        for (let i = shuffledSymbols.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffledSymbols[i], shuffledSymbols[j]] = [shuffledSymbols[j], shuffledSymbols[i]];
-        }
-        return shuffledSymbols;
-    }
-
-    function spinReels() {
-        if (isSpinning) return;
-        isSpinning = true;
-        
-        reels.forEach((reel, index) => {
-            const symbols = reel.children;
-            const randomSymbols = getRandomSymbols(symbols, index);
-
-            let duration = turboMode ? 500 : 2000;  // Ajusta duración para turbo o normal
-            reel.style.transition = `transform ${duration}ms ease-in-out`;
-            reel.style.transform = `translateY(-${Math.random() * 1000 + 100}%)`;
-
-            setTimeout(() => {
-                reel.style.transition = '';
-                reel.style.transform = ''; // Resetea la posición
-                randomSymbols.forEach(symbol => {
-                    reel.appendChild(symbol); // Reordena los símbolos
-                });
-
-                if (index === reels.length - 1) {
-                    isSpinning = false;
-                    if (autoplayMode) {
-                        spinReels();
-                    }
-                }
-            }, duration);
-        });
-    }
-
-    function toggleTurboMode() {
-        turboMode = !turboMode;
-    }
-
-    function toggleAutoplay() {
-        autoplayMode = !autoplayMode;
-        if (autoplayMode) {
-            spinReels();
-        } else {
-            clearInterval(spinInterval);
-        }
-    }
-
-    spinButton.addEventListener('click', spinReels);
-    turboButton.addEventListener('click', toggleTurboMode);
-    autoplayButton.addEventListener('click', toggleAutoplay);
+    reel.style.transitionDuration = `${spinDuration}s`;
+    reel.style.transform = `translateY(-${spinHeight}px)`;
+    
+    // Restablecer la posición después de la animación
+    setTimeout(() => {
+      reel.style.transitionDuration = '0s';
+      reel.style.transform = `translateY(0)`;
+    }, spinDuration * 1000);
+  });
 });
 </script>
-
-
 </html>
