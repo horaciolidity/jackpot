@@ -342,23 +342,28 @@
   </div>
 </body>
   <script>
-document.querySelector('.spin').addEventListener('click', () => {
-  const reels = document.querySelectorAll('.reel');
-  
-  reels.forEach((reel, index) => {
-    // Diferentes velocidades para cada carrete
-    const spinDuration = 1 + Math.random() * 2; // Velocidad aleatoria entre 1 y 3 segundos
-    const spinHeight = reel.clientHeight * 3; // Desplazamiento mayor para simular más vueltas
+ document.querySelector('.spin').addEventListener('click', () => {
+      const reels = document.querySelectorAll('.reel');
 
-    reel.style.transitionDuration = `${spinDuration}s`;
-    reel.style.transform = `translateY(-${spinHeight}px)`;
-    
-    // Restablecer la posición después de la animación
-    setTimeout(() => {
-      reel.style.transitionDuration = '0s';
-      reel.style.transform = `translateY(0)`;
-    }, spinDuration * 1000);
-  });
-});
+      reels.forEach((reel, index) => {
+        // Velocidades aleatorias entre 2 y 4 segundos
+        const spinDuration = Math.random() * 2 + 2;
+        // Desplazamiento mayor para simular más vueltas
+        const reelHeight = reel.scrollHeight;
+        const spinHeight = reelHeight * 5;
+
+        // Posición final aleatoria dentro de las opciones disponibles
+        const finalPosition = Math.floor(Math.random() * (reelHeight / 50)) * 50;
+        
+        reel.style.transition = `transform ${spinDuration}s cubic-bezier(0.25, 0.1, 0.25, 1)`;
+        reel.style.transform = `translateY(-${spinHeight + finalPosition}px)`;
+
+        // Restablecer la posición después de la animación
+        setTimeout(() => {
+          reel.style.transition = 'none';
+          reel.style.transform = `translateY(${finalPosition}px)`;
+        }, spinDuration * 1000);
+      });
+    });
 </script>
 </html>
