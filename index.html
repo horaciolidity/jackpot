@@ -354,55 +354,49 @@
 
 </body>
   <script>
- document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     const reels = document.querySelectorAll('.reel');
     const spinButton = document.querySelector('.spin');
+    const spinDuration = 2000; // Duración del giro en milisegundos
 
-    const numSpins = 10; // Número de giros completos antes de detenerse
-
-    function spinReel(reel, spinDuration) {
+    function spinReel(reel) {
         return new Promise(resolve => {
-            let totalSpins = numSpins * reel.children.length; // Número total de giros basados en el número de imágenes
-            let currentSpin = 0;
-            let reelHeight = reel.scrollHeight;
-            let singleImageHeight = reelHeight / reel.children.length;
-            let startTime = null;
+            const reelHeight = reel.scrollHeight;
+            const singleImageHeight = reel.querySelector('img').offsetHeight;
+            const totalImages = reel.children.length;
+            const totalScrollHeight = singleImageHeight * totalImages;
+            
+            const randomOffset = Math.floor(Math.random() * singleImageHeight);
+            const startPosition = -randomOffset;
+            const endPosition = startPosition - (reelHeight + totalScrollHeight);
 
-            function spin(timestamp) {
-                if (!startTime) startTime = timestamp;
-                let progress = timestamp - startTime;
-                let spinProgress = Math.min(progress / spinDuration, 1);
+            reel.style.transition = `transform ${spinDuration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+            reel.style.transform = `translateY(${endPosition}px)`;
 
-                // Calcular la posición actual del scroll basado en el progreso
-                let scrollPosition = ((currentSpin + spinProgress) * singleImageHeight) % reelHeight;
-                reel.style.transform = `translateY(-${scrollPosition}px)`;
-
-                if (spinProgress < 1) {
-                    requestAnimationFrame(spin);
-                } else {
-                    currentSpin++;
-                    if (currentSpin < totalSpins) {
-                        startTime = null; // Resetear el tiempo de inicio
-                        requestAnimationFrame(spin);
-                    } else {
-                        resolve();
-                    }
-                }
-            }
-
-            requestAnimationFrame(spin);
+            setTimeout(() => {
+                reel.style.transition = 'none';
+                reel.style.transform = `translateY(${startPosition}px)`;
+                setTimeout(() => {
+                    reel.style.transition = `transform ${spinDuration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+                    resolve();
+                }, 50); // Small delay before enabling transition again
+            }, spinDuration);
         });
     }
 
-    async function spinAllReels() {
-        const spinDuration = 2000; // Duración de cada giro en milisegundos
-        for (const reel of reels) {
-            await spinReel(reel, spinDuration);
-        }
+    function spinAllReels() {
+        const spinPromises = Array.from(reels).map(reel => spinReel(reel));
+        Promise.all(spinPromises).then(() => {
+            // Aquí puedes manejar la lógica después de que todos los giros hayan terminado
+            console.log('All reels stopped');
+        });
     }
 
-    spinButton.addEventListener('click', spinAllReels);
+    spinButton.addEventListener('click', () => {
+        spinAllReels();
+    });
 });
+
 
 
   </script>
