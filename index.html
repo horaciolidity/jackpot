@@ -44,9 +44,11 @@
     }
 
     @keyframes sparkle {
-      0%, 100% {
+      0%,
+      100% {
         text-shadow: 2px 2px 4px #000000, 0 0 10px #ffd700;
       }
+
       50% {
         text-shadow: 2px 2px 4px #000000, 0 0 20px #ffd700, 0 0 30px #ff6b00;
       }
@@ -88,6 +90,7 @@
       0% {
         transform: rotate(0deg);
       }
+
       100% {
         transform: rotate(360deg);
       }
@@ -111,8 +114,11 @@
       border-radius: 10px;
       padding: 10px;
       position: relative;
-      overflow: hidden; /* Updated to hide overflow */
-      height: 400px; /* Set a fixed height to show reels spinning */
+      overflow: hidden;
+      height: 400px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .reels {
@@ -121,20 +127,20 @@
       position: relative;
     }
 
-       .reel {
+    .reel {
       flex: 1;
       display: flex;
       flex-direction: column;
+      height: 100%;
       transition: transform 1s ease-out;
-      height: 400px; /* Ajusta según tus necesidades */
-
     }
+
     .reel img {
       border: 2px solid #ffd700;
       border-radius: 5px;
       aspect-ratio: 1 / 1;
-      width: 100%;
-      height: auto;
+      width: 100px;
+      height: 100px;
       object-fit: cover;
     }
 
@@ -157,7 +163,8 @@
       top: -30px;
     }
 
-    .left-controls, .right-controls {
+    .left-controls,
+    .right-controls {
       display: flex;
       align-items: center;
     }
@@ -193,7 +200,9 @@
       transform: scale(0.95);
     }
 
-    .settings, .info, .sound {
+    .settings,
+    .info,
+    .sound {
       font-size: 16px;
       width: 40px;
       height: 40px;
@@ -204,7 +213,8 @@
       align-items: center;
     }
 
-    .decrease-bet, .increase-bet {
+    .decrease-bet,
+    .increase-bet {
       font-size: 24px;
       width: 40px;
       height: 40px;
@@ -217,7 +227,7 @@
       text-transform: uppercase;
       margin: 0 15px;
     }
-    
+
     .spin:hover {
       background-color: rgba(255, 255, 255, 0.1);
     }
@@ -226,13 +236,15 @@
       transform: scale(0.95);
     }
 
-    .turbo-spin, .autoplay {
+    .turbo-spin,
+    .autoplay {
       padding: 10px 15px;
       border-radius: 25px;
       font-size: 16px;
     }
 
-    .credit, .bet {
+    .credit,
+    .bet {
       color: #fff;
       font-weight: bold;
       font-size: 16px;
@@ -318,55 +330,52 @@
     <footer>
       <div class="controls">
         <div class="left-controls">
-          <button class="settings">⚙️</button>
-          <button class="info">ℹ️</button>
-          <button class="sound">🔊</button>
+          <button class="settings"><i class="fas fa-cog"></i></button>
         </div>
         <div class="center-controls">
           <div class="spin-controls">
-            <button class="decrease-bet">-</button>
-            <div class="bet">$5.00</div>
-            <button class="increase-bet">+</button>
+            <button class="decrease-bet"><i class="fas fa-minus"></i></button>
+            <button class="spin">Spin</button>
+            <button class="increase-bet"><i class="fas fa-plus"></i></button>
           </div>
-          <button class="spin">SPIN</button>
           <div class="balance-bet">
-            <div class="credit">Credit: $100.00</div>
-            <div class="bet">Bet: $5.00</div>
+            <span class="credit">Credit: $100</span>
+            <span class="bet">Bet: $1</span>
           </div>
         </div>
         <div class="right-controls">
-          <button class="turbo-spin">Turbo Spin</button>
-          <button class="autoplay">Autoplay</button>
+          <button class="sound"><i class="fas fa-volume-up"></i></button>
+          <button class="info"><i class="fas fa-info-circle"></i></button>
         </div>
       </div>
     </footer>
   </div>
-</body>
+
   <script>
-  document.querySelector('.spin').addEventListener('click', () => {
-      const reels = document.querySelectorAll('.reel');
+    document.querySelector(".spin").addEventListener("click", function () {
+      const reels = document.querySelectorAll(".reel");
+      const reelHeight = reels[0].clientHeight;
+      const symbolHeight = reels[0].querySelector("img").clientHeight;
+      const symbolsPerReel = reels[0].children.length;
+      const totalHeight = symbolHeight * symbolsPerReel;
 
-      reels.forEach((reel) => {
-        // Restablecer transición
-        reel.style.transition = 'none';
-        reel.style.transform = 'translateY(0px)';
+      reels.forEach((reel, index) => {
+        const spinDuration = 2 + Math.random() * 2; // Random duration between 2 and 4 seconds
+        const spinTimes = 4 + Math.floor(Math.random() * 3); // Spin between 4 and 6 times
+        const randomShift = Math.floor(Math.random() * symbolsPerReel) * symbolHeight;
+        const finalShift = totalHeight * spinTimes + randomShift;
 
-        // Configuración de animación infinita
-        const spinDuration = 5; // Duración en segundos
-        reel.style.transition = `transform ${spinDuration}s cubic-bezier(0.25, 0.1, 0.25, 1)`;
-        reel.style.transform = `translateY(-${reel.scrollHeight}px)`;
+        reel.style.transition = `transform ${spinDuration}s cubic-bezier(0.25, 1, 0.5, 1)`;
+        reel.style.transform = `translateY(-${finalShift}px)`;
+
+        setTimeout(() => {
+          // Reset the position to simulate infinite loop
+          reel.style.transition = "none";
+          reel.style.transform = `translateY(-${randomShift}px)`;
+        }, spinDuration * 1000);
       });
-
-      // Detener la animación y ajustar a una posición final aleatoria después de un tiempo
-      setTimeout(() => {
-        reels.forEach((reel) => {
-          // Detener animación
-          reel.style.transition = 'none';
-          const reelHeight = reel.scrollHeight;
-          const finalPosition = Math.floor(Math.random() * 7) * 100; // Ajusta según la altura de los símbolos
-          reel.style.transform = `translateY(-${finalPosition}px)`;
-        });
-      }, 5000); // Ajusta el tiempo de animación según tus necesidades
     });
-</script>
+  </script>
+</body>
+
 </html>
