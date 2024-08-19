@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wolf Gold Slot Machine</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-image: url('https://i.imgur.com/fO29FjI.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .game-container {
+      width: 1000px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: transparent;
+      color: #ffd700;
+      padding: 10px;
+      text-align: center;
+    }
+
+    h1.game-title {
+      font-size: 48px;
+      margin: 0 0 10px 0;
+      text-shadow: 2px 2px 4px #000000, 0 0 10px #ffd700;
+      color: #ffffff;
+      font-weight: bold;
+      letter-spacing: 2px;
+      animation: sparkle 2s infinite;
+    }
+
+    @keyframes sparkle {
+      0%, 100% {
+        text-shadow: 2px 2px 4px #000000, 0 0 10px #ffd700;
+      }
+      50% {
+        text-shadow: 2px 2px 4px #000000, 0 0 20px #ffd700, 0 0 30px #ff6b00;
+      }
+    }
+
+    .jackpots {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      background: transparent;
+      padding: 10px;
+    }
+
+    .jackpot {
+      background: linear-gradient(to bottom, rgba(28, 28, 28, 0.8), rgba(0, 0, 0, 0.8));
+      border: 2px solid #ffd700;
+      border-radius: 0;
+      padding: 5px 15px;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      flex-grow: 1;
+      margin: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .jackpot::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
+      animation: sparkleEffect 4s infinite linear;
+    }
+
+    @keyframes sparkleEffect {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .jackpot .amount {
+      display: block;
+      font-size: 24px;
+      color: #ffffff;
+    }
+
+    .jackpot .label {
+      display: block;
+      font-size: 14px;
+      color: #ffd700;
+    }
+
+    .slot-machine {
+      background-color: rgba(0, 0, 0, 0.7);
+      border: 5px solid #ffd700;
+      border-radius: 10px;
+      padding: 10px;
+      position: relative;
+      overflow: visible; /* Add this to hide overflowing content */
+    }
+
+    .reels {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 5px;
+      background-color: rgba(245, 230, 211, 0.2);
+      border-radius: 5px;
+      padding: 10px;
+      margin-bottom: 0; /* Remove negative margin */
+    }
+
+    .reel-symbol {
+      border: 2px solid #ffd700;
+      border-radius: 5px;
+      aspect-ratio: 1 / 1;
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+
+    footer {
+      background-color: transparent;
+      padding: 10px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      height: 80px;
+      position: relative;
+      top: -30px;
+    }
+
+    .left-controls, .right-controls {
+      display: flex;
+      align-items: center;
+    }
+
+    .center-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-grow: 1;
+      margin: 0 20px;
+    }
+
+    button {
+      background-color: transparent;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      padding: 10px;
+      margin: 0 5px;
+      cursor: pointer;
+      color: #ffffff;
+      transition: background-color 0.3s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    .settings, .info, .sound {
+      font-size: 16px;
+      width: 40px;
+      height: 40px;
+    }
+
+    .spin-controls {
+      display: flex;
+      align-items: center;
+    }
+
+    .decrease-bet, .increase-bet {
+      font-size: 24px;
+      width: 40px;
+      height: 40px;
+    }
+
+    .spin {
+      width: 100px;
+      height: 100px;
+      font-size: 20px;
+      text-transform: uppercase;
+      margin: 0 15px;
+    }
+    
+    .spin:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .spin:active {
+      transform: scale(0.95);
+    }
+
+    .turbo-spin, .autoplay {
+      padding: 10px 15px;
+      border-radius: 25px;
+      font-size: 16px;
+    }
+
+    .credit, .bet {
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+      margin: 5px 0;
+    }
+
+    .balance-bet {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="game-container">
+    <header>
+      <h1 class="game-title">WOLF GOLD</h1>
+      <div class="jackpots">
+        <div class="jackpot mini">
+          <span class="amount">$7.50</span>
+          <span class="label">MINI</span>
+        </div>
+        <div class="jackpot major">
+          <span class="amount">$25.00</span>
+          <span class="label">MAJOR</span>
+        </div>
+        <div class="jackpot mega">
+          <span class="amount">$250.00</span>
+          <span class="label">MEGA</span>
+        </div>
+      </div>
+    </header>
+    <div class="slot-machine">
+      <div class="reels">
+        <img src="https://i.imgur.com/tZUCXRv.png" class="reel-symbol" alt="Symbol 1">
+        <img src="https://i.imgur.com/QOyYQri.png" class="reel-symbol" alt="Symbol 2">
+        <img src="https://i.imgur.com/ebZKwXy.png" class="reel-symbol" alt="Symbol 3">
+        <img src="https://i.imgur.com/1RQKo4y.png" class="reel-symbol" alt="Symbol 4">
+        <img src="https://i.imgur.com/AxEqKES.png" class="reel-symbol" alt="Symbol 5">
+        <img src="https://i.imgur.com/nMr4y4g.png" class="reel-symbol" alt="Symbol 6">
+        <img src="https://i.imgur.com/jCt1QBb.png" class="reel-symbol" alt="Symbol 7">
+        <img src="https://i.imgur.com/OVu1t5m.png" class="reel-symbol" alt="Symbol 8">
+        <img src="https://i.imgur.com/tZUCXRv.png" class="reel-symbol" alt="Symbol 1">
+        <img src="https://i.imgur.com/QOyYQri.png" class="reel-symbol" alt="Symbol 2">
+        <img src="https://i.imgur.com/ebZKwXy.png" class="reel-symbol" alt="Symbol 3">
+        <img src="https://i.imgur.com/1RQKo4y.png" class="reel-symbol" alt="Symbol 4">
+        <img src="https://i.imgur.com/AxEqKES.png" class="reel-symbol" alt="Symbol 5">
+        <img src="https://i.imgur.com/nMr4y4g.png" class="reel-symbol" alt="Symbol 6">
+        <img src="https://i.imgur.com/jCt1QBb.png" class="reel-symbol" alt="Symbol 7">
+      </div>
+    </div>
+    <footer>
+      <div class="controls">
+        <div class="left-controls">
+          <button class="settings">⚙️</button>
+          <button class="info">ℹ️</button>
+          <button class="sound">🔊</button>
+        </div>
+        <div class="center-controls">
+          <div class="balance-bet">
+            <div class="credit">CREDIT $100,000.00</div>
+            <div class="bet">BET $0.25</div>
+          </div>
+          <div class="spin-controls">
+          <button class="turbo-spin">TURBO</button>
+          <button class="autoplay">AUTOPLAY</button>
+          </div>
+        </div>
+        <div class="right-controls">
+
+          
+                      <button class="decrease-bet">-</button>
+            <button class="spin">SPIN</button>
+            <button class="increase-bet">+</button>
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+
+</html>
