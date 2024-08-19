@@ -309,63 +309,73 @@
     </footer>
   </div>
 </body>
-  <script>
-  document.addEventListener('DOMContentLoaded', function() {
+<script>
+document.addEventListener('DOMContentLoaded', function() {
     const spinButton = document.querySelector('.spin');
     const turboButton = document.querySelector('.turbo-spin');
     const autoplayButton = document.querySelector('.autoplay');
-    const reels = document.querySelector('.reels');
+    const reels = document.querySelectorAll('.reels');
     let turboMode = false;
     let isSpinning = false;
     let autoplayMode = false;
     let spinInterval;
 
-    const symbols = Array.from(reels.children);
-
-    function spinReels() {
-      isSpinning = true;
-      symbols.forEach(symbol => {
-        const randomIndex = Math.floor(Math.random() * symbols.length);
-        reels.appendChild(symbols[randomIndex]);
-      });
-      
-      // Simular animación de giro
-      reels.style.transition = turboMode ? 'transform 0.5s ease' : 'transform 2s ease';
-      reels.style.transform = `translateY(-${Math.floor(Math.random() * 100)}%)`;
-
-      setTimeout(() => {
-        reels.style.transition = '';
-        reels.style.transform = '';
-        isSpinning = false;
-
-        if (autoplayMode) {
-          spinReels();
+    function getRandomSymbols(symbols, column) {
+        // Reordenar símbolos aleatoriamente en cada columna
+        let shuffledSymbols = Array.from(symbols[column]);
+        for (let i = shuffledSymbols.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledSymbols[i], shuffledSymbols[j]] = [shuffledSymbols[j], shuffledSymbols[i]];
         }
-      }, turboMode ? 500 : 2000);
+        return shuffledSymbols;
     }
 
-    spinButton.addEventListener('click', () => {
-      if (!isSpinning) {
-        spinReels();
-      }
-    });
+    function spinReels() {
+        if (isSpinning) return;
+        isSpinning = true;
+        
+        reels.forEach((reel, index) => {
+            const symbols = reel.children;
+            const randomSymbols = getRandomSymbols(symbols, index);
 
-    turboButton.addEventListener('click', () => {
-      turboMode = !turboMode;
-      turboButton.classList.toggle('active', turboMode);
-    });
+            let duration = turboMode ? 500 : 2000;  // Ajusta duración para turbo o normal
+            reel.style.transition = `transform ${duration}ms ease-in-out`;
+            reel.style.transform = `translateY(-${Math.random() * 1000 + 100}%)`;
 
-    autoplayButton.addEventListener('click', () => {
-      autoplayMode = !autoplayMode;
-      autoplayButton.classList.toggle('active', autoplayMode);
+            setTimeout(() => {
+                reel.style.transition = '';
+                reel.style.transform = ''; // Resetea la posición
+                randomSymbols.forEach(symbol => {
+                    reel.appendChild(symbol); // Reordena los símbolos
+                });
 
-      if (autoplayMode && !isSpinning) {
-        spinReels();
-      } else {
-        clearInterval(spinInterval);
-      }
-    });
-  });
+                if (index === reels.length - 1) {
+                    isSpinning = false;
+                    if (autoplayMode) {
+                        spinReels();
+                    }
+                }
+            }, duration);
+        });
+    }
+
+    function toggleTurboMode() {
+        turboMode = !turboMode;
+    }
+
+    function toggleAutoplay() {
+        autoplayMode = !autoplayMode;
+        if (autoplayMode) {
+            spinReels();
+        } else {
+            clearInterval(spinInterval);
+        }
+    }
+
+    spinButton.addEventListener('click', spinReels);
+    turboButton.addEventListener('click', toggleTurboMode);
+    autoplayButton.addEventListener('click', toggleAutoplay);
+});
 </script>
 
 
