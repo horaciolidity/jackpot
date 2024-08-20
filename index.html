@@ -451,21 +451,11 @@ const reels = document.querySelectorAll('.reel');
 const spinButton = document.querySelector('.spin');
 const spinSpeed = 100; // Velocidad de cambio entre imágenes
 const numSpins = 20; // Número de veces que cada columna "gira"
-const numImages = 8; // Número total de imágenes diferentes
-const middleLineIndex = 2; // Índice de la línea del medio (0-based index)
 
-function generateUniqueImages() {
-    let images = [];
-    for (let i = 1; i <= numImages; i++) {
-        images.push(`https://jackpot-peach.vercel.app/img${i}.png`);
-    }
-    return images.sort(() => Math.random() - 0.5); // Barajar imágenes
-}
-
+// Función para girar una columna
 function spinReel(reel, numSpins) {
     return new Promise(resolve => {
         let currentSpin = 0;
-        const images = generateUniqueImages(); // Generar imágenes únicas para esta columna
 
         function spin() {
             // Mover la última imagen al inicio del contenedor
@@ -485,6 +475,7 @@ function spinReel(reel, numSpins) {
     });
 }
 
+// Función para iniciar el giro de todas las columnas
 function startSpinning() {
     let spinPromises = [];
     reels.forEach((reel, index) => {
@@ -493,76 +484,84 @@ function startSpinning() {
     });
 
     Promise.all(spinPromises).then(() => {
+        checkForMatches();
         console.log('All reels have stopped spinning.');
-        checkResults();
     });
 }
 
-function highlightLine(lineIndex) {
-    const reels = document.querySelectorAll('.reel');
-    reels.forEach(reel => {
-        const imgs = reel.querySelectorAll('img');
-        imgs[lineIndex].classList.add('highlight');
-    });
+function getReelImages(reel) {
+    return Array.from(reel.querySelectorAll('img')).map(img => img.src);
 }
 
-function clearHighlights() {
-    document.querySelectorAll('.reel img').forEach(img => img.classList.remove('highlight'));
+function getLineImages() {
+    return Array.from(document.querySelectorAll('.reel')).map(reel => getReelImages(reel));
 }
 
-function checkResults() {
-    clearHighlights();
-    const reelImages = Array.from(reels).map(reel => 
-        Array.from(reel.querySelectorAll('img')).map(img => img.src)
-    );
-
-    // Verificar la línea del medio
-    const middleLine = reelImages.map(images => images[middleLineIndex]);
+function checkForMatches() {
+    const lineImages = getLineImages();
+    const middleRowIndex = 2; // La línea del medio en una matriz de 5 imágenes
+    const middleRow = lineImages.map(images => images[middleRowIndex]);
+    
     const counts = {};
+    middleRow.forEach(img => {
+        counts[img] = (counts[img] || 0) + 1;
+    });
 
-    middleLine.forEach(img => counts[img] = (counts[img] || 0) + 1);
+    let matchCount = 0;
+    Object.values(counts).forEach(count => {
+        if (count >= 3) matchCount = Math.max(matchCount, count);
+    });
 
-    const matchedImages = Object.keys(counts).filter(img => counts[img] >= 3);
+    highlightLine(middleRow, matchCount);
+}
 
-    if (matchedImages.length) {
-        // Resaltar la línea del medio según el número de coincidencias
-        middleLine.forEach((img, index) => {
-            if (counts[img] >= 3) {
-                highlightLine(index);
-            }
-        });
-
-        if (matchedImages.length === 1) {
-            if (counts[matchedImages[0]] === 5) {
-                alert('¡5 coincidencias!');
-            } else if (counts[matchedImages[0]] === 4) {
-                alert('¡4 coincidencias!');
-            } else if (counts[matchedImages[0]] === 3) {
-                alert('¡3 coincidencias!');
+function highlightLine(middleRow, matchCount) {
+    const reels = document.querySelectorAll('.reel');
+    const middleRowIndex = 2; // La línea del medio en una matriz de 5 imágenes
+    
+    reels.forEach((reel, index) => {
+        const images = Array.from(reel.querySelectorAll('img'));
+        const img = images[middleRowIndex];
+        if (matchCount >= 3) {
+            if (img.src === middleRow[index]) {
+                img.classList.add('highlight');
+                if (matchCount >= 5) {
+                    img.classList.add('flash');
+                }
             }
         }
-    }
+    });
+    
+    setTimeout(() => {
+        document.querySelectorAll('.highlight').forEach(img => img.classList.remove('highlight'));
+        document.querySelectorAll('.flash').forEach(img => img.classList.remove('flash'));
+    }, 2000); // Elimina el resaltado después de 2 segundos
 }
 
-spinButton.addEventListener('click', startSpinning);
-
-// Guardar y cargar el estado del último giro en el almacenamiento local
-window.addEventListener('load', () => {
-    const savedState = localStorage.getItem('slotState');
-    if (savedState) {
-        const state = JSON.parse(savedState);
-        state.forEach((column, index) => {
-            const reel = reels[index];
-            reel.innerHTML = column.map(src => `<img src="${src}" class="reel-symbol" alt="Symbol">`).join('');
+// Función para barajar las imágenes en cada columna
+function shuffleImages() {
+    const allImages = [
+        'https://jackpot-peach.vercel.app/img1.png',
+        'https://jackpot-peach.vercel.app/img2.png',
+        'https://jackpot-peach.vercel.app/img3.png',
+        'https://jackpot-peach.vercel.app/img4.png',
+        'https://jackpot-peach.vercel.app/img5.png',
+        'https://jackpot-peach.vercel.app/img6.png',
+        'https://jackpot-peach.vercel.app/img7.png'
+    ];
+    
+    reels.forEach(reel => {
+        const images = Array.from(reel.querySelectorAll('img'));
+        const shuffledImages = allImages.sort(() => Math.random() - 0.5);
+        images.forEach((img, index) => {
+            img.src = shuffledImages[index % shuffledImages.length];
         });
-    }
-});
+    });
+}
 
-window.addEventListener('beforeunload', () => {
-    const state = Array.from(reels).map(reel => 
-        Array.from(reel.querySelectorAll('img')).map(img => img.src)
-    );
-    localStorage.setItem('slotState', JSON.stringify(state));
+spinButton.addEventListener('click', () => {
+    shuffleImages();
+    startSpinning();
 });
 
   </script>
