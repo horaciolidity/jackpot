@@ -489,7 +489,7 @@ function spinReel(reel, numSpins) {
 function startSpinning() {
     shuffleImages(); // Barajar las imágenes antes de girar
     let spinPromises = [];
-    reels.forEach((reel, index) => {
+    reels.forEach((reel) => {
         const spinsForThisReel = numSpins + Math.floor(Math.random() * 10); // Añadir variación aleatoria a cada columna
         spinPromises.push(spinReel(reel, spinsForThisReel));
     });
@@ -500,81 +500,46 @@ function startSpinning() {
     });
 }
 
-// Función para obtener las imágenes de una columna específica
 function getReelImages(reel) {
     return Array.from(reel.querySelectorAll('img')).map(img => img.src);
 }
 
-// Función para obtener las imágenes de todas las columnas
-function getAllReelImages() {
+function getLineImages() {
     return Array.from(document.querySelectorAll('.reel')).map(reel => getReelImages(reel));
 }
 
-// Función para obtener imágenes de una línea específica
-function getLineImages(lineIndex) {
-    return Array.from(reels).map(reel => reel.children[lineIndex].src);
-}
-
-// Función para obtener las posiciones de una línea específica
-function getLinePositions(lineIndex) {
-    return Array.from(reels).map((reel, reelIndex) => ({
-        reelIndex,
-        imgIndex: lineIndex
-    }));
-}
-
-// Función para obtener imágenes de las líneas diagonales
-function getCrossImages(crossIndices) {
-    return crossIndices.map(index => reels[index].children[2].src); // Suponiendo la línea de la cruz es la del medio
-}
-
-// Función para obtener las posiciones de una cruz específica
-function getCrossPositions(crossIndices) {
-    return crossIndices.map(index => ({
-        reelIndex: index,
-        imgIndex: 2 // Suponiendo la línea de la cruz es la del medio
-    }));
-}
-
-// Función para contar coincidencias
-function countMatches(images) {
-    let counts = {};
-    images.forEach(img => {
-        let src = img.src;
-        counts[src] = (counts[src] || 0) + 1;
-    });
-
-    let maxCount = Math.max(...Object.values(counts));
-    return maxCount;
-}
-
-// Función para verificar resultados y resaltar coincidencias
 function checkForMatches() {
-    // Comprobar líneas horizontales
-    for (let i = 0; i < 3; i++) {
-        let line = getLineImages(i);
-        let count = countMatches(line);
-        if (count >= 3) {
-            highlightWinningLine(getLinePositions(i), count);
+    const lineImages = getLineImages();
+    const matchPositions = [];
+
+    for (let row = 0; row < 5; row++) {
+        const rowImages = lineImages.map(images => images[row]);
+        const counts = {};
+        rowImages.forEach(img => {
+            counts[img] = (counts[img] || 0) + 1;
+        });
+
+        let matchCount = 0;
+        let matchImg = null;
+        Object.entries(counts).forEach(([img, count]) => {
+            if (count >= 3) {
+                matchCount = Math.max(matchCount, count);
+                matchImg = img;
+            }
+        });
+
+        if (matchCount >= 3) {
+            lineImages.forEach((images, idx) => {
+                const img = images[row];
+                if (img === matchImg) {
+                    matchPositions.push({ reelIndex: idx, imgIndex: row });
+                }
+            });
+            highlightWinningLine(matchPositions, matchCount);
         }
     }
-
-    // Comprobar líneas diagonales
-    let crossLines = [
-        [0, 1, 2], // Línea diagonal desde arriba a la izquierda
-        [2, 1, 0]  // Línea diagonal desde abajo a la derecha
-    ];
-
-    crossLines.forEach(indices => {
-        let line = getCrossImages(indices);
-        let count = countMatches(line);
-        if (count >= 3) {
-            highlightWinningLine(getCrossPositions(indices), count);
-        }
-    });
 }
 
-// Función para resaltar la línea ganadora
 function highlightWinningLine(positions, count) {
     // Primero, eliminar todas las clases de resaltado
     reels.forEach(reel => {
@@ -587,7 +552,7 @@ function highlightWinningLine(positions, count) {
     positions.forEach(pos => {
         const reel = reels[pos.reelIndex];
         const img = reel.children[pos.imgIndex];
-        
+
         if (count === 5) {
             img.classList.add('highlight-five', 'flash-twice');
         } else if (count === 4) {
@@ -600,7 +565,6 @@ function highlightWinningLine(positions, count) {
     });
 }
 
-// Función para barajar las imágenes en cada columna con una organización diferente
 function shuffleImages() {
     const allImages = [
         'https://jackpot-peach.vercel.app/img1.png',
@@ -613,7 +577,7 @@ function shuffleImages() {
         'https://jackpot-peach.vercel.app/img8.png'
     ];
 
-    reels.forEach((reel, index) => {
+    reels.forEach((reel) => {
         const images = Array.from(allImages); // Clonar la lista de imágenes
         const shuffledImages = images.sort(() => Math.random() - 0.5); // Barajar la lista
         const imagesInColumn = shuffledImages.slice(0, images.length); // Obtener una permutación única para esta columna
@@ -624,8 +588,10 @@ function shuffleImages() {
     });
 }
 
-// Añadir el evento de clic al botón de giro
-spinButton.addEventListener('click', startSpinning);
+spinButton.addEventListener('click', () => {
+    startSpinning();
+});
+
 
 
 
