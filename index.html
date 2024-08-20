@@ -356,33 +356,34 @@
   <script>
 const reels = document.querySelectorAll('.reel');
 const spinButton = document.querySelector('.spin');
-const numSpins = 20; // Número de giros completos antes de detenerse
 const reelHeight = 400; // Altura de cada reel (debe coincidir con la altura del contenedor)
+const symbolHeight = 80; // Altura de cada símbolo individual
+const spinSpeed = 10; // Velocidad del giro (ajustable)
 
+// Función para iniciar el giro de un reel
 function spinReel(reel, spinDuration) {
     return new Promise(resolve => {
         const symbols = reel.querySelectorAll('img');
-        const symbolHeight = symbols[0].offsetHeight;
         const totalHeight = symbolHeight * symbols.length;
 
         let startTime = null;
-        let currentSpin = 0;
+        let currentY = 0;
 
         function spin(timestamp) {
             if (!startTime) startTime = timestamp;
             const elapsedTime = timestamp - startTime;
-            const progress = Math.min(elapsedTime / spinDuration, 1);
 
-            const scrollDistance = (totalHeight * progress) % totalHeight;
-            reel.style.transform = `translateY(-${scrollDistance}px)`;
-            reel.style.transition = 'none';
+            // Calcular la nueva posición Y basada en la velocidad de giro
+            currentY = (currentY + spinSpeed) % totalHeight;
+            reel.style.transform = `translateY(-${currentY}px)`;
 
+            // Continuar girando hasta que se alcance la duración total del giro
             if (elapsedTime < spinDuration) {
                 requestAnimationFrame(spin);
             } else {
-                // Reset the transform and align to final position
-                reel.style.transition = 'transform 0.5s ease-out';
-                reel.style.transform = `translateY(-${scrollDistance % symbolHeight}px)`;
+                // Alinear el reel en la posición final más cercana
+                const finalPosition = Math.round(currentY / symbolHeight) * symbolHeight;
+                reel.style.transform = `translateY(-${finalPosition}px)`;
                 resolve();
             }
         }
@@ -391,6 +392,7 @@ function spinReel(reel, spinDuration) {
     });
 }
 
+// Función para iniciar el giro de todos los reels
 function startSpinning() {
     let spinPromises = [];
     reels.forEach((reel, index) => {
@@ -404,8 +406,6 @@ function startSpinning() {
 }
 
 spinButton.addEventListener('click', startSpinning);
-
-
 
   </script>
 </html>
