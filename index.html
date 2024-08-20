@@ -266,6 +266,23 @@
       flex-direction: column;
       align-items: flex-start;
     }
+    .reel img.highlight {
+  border: 2px solid #ff0000; /* Color de borde para resaltar */
+  animation: highlightAnimation 1s ease-in-out;
+}
+
+@keyframes highlightAnimation {
+  0% {
+    border-color: #ff0000;
+  }
+  50% {
+    border-color: #ffd700;
+  }
+  100% {
+    border-color: #ff0000;
+  }
+}
+
   </style>
 </head>
 
@@ -395,15 +412,73 @@ function spinReel(reel, numSpins) {
 // Función para iniciar el giro de todas las columnas
 function startSpinning() {
     let spinPromises = [];
+    let finalPositions = [];
+
     reels.forEach((reel, index) => {
         const spinsForThisReel = numSpins + Math.floor(Math.random() * 10); // Añadir variación aleatoria a cada columna
+        finalPositions.push(getFinalReelState(reel)); // Guardar el estado final de cada reel
         spinPromises.push(spinReel(reel, spinsForThisReel));
     });
 
     Promise.all(spinPromises).then(() => {
         console.log('All reels have stopped spinning.');
+        checkWinningLine(finalPositions); // Verificar coincidencias
+        saveReelState(finalPositions); // Guardar el estado de los reels en el localStorage
     });
 }
+
+// Función para obtener el estado final de un reel
+function getFinalReelState(reel) {
+    return Array.from(reel.children).map(img => img.src);
+}
+
+// Función para guardar el estado de los reels en el localStorage
+function saveReelState(state) {
+    localStorage.setItem('reelState', JSON.stringify(state));
+}
+
+// Función para verificar coincidencias en la línea central y resaltar la línea
+function checkWinningLine(positions) {
+    const winningLine = 4; // Línea central (índice 4)
+    let isWinning = true;
+    const firstImageSrc = positions[0][winningLine]; // Imagen de referencia para comparación
+
+    for (let i = 0; i < positions.length; i++) {
+        if (positions[i][winningLine] !== firstImageSrc) {
+            isWinning = false;
+            break;
+        }
+    }
+
+    if (isWinning) {
+        highlightWinningLine();
+    }
+}
+
+// Función para resaltar la línea ganadora
+function highlightWinningLine() {
+    // Añadir una clase que resalte la línea central
+    const reels = document.querySelectorAll('.reel');
+    reels.forEach(reel => {
+        reel.children[4].classList.add('highlight');
+    });
+}
+
+// Función para cargar el estado de los reels desde el localStorage al cargar la página
+function loadReelState() {
+    const savedState = JSON.parse(localStorage.getItem('reelState'));
+    if (savedState) {
+        reels.forEach((reel, index) => {
+            const children = Array.from(reel.children);
+            savedState[index].forEach((src, i) => {
+                children[i].src = src;
+            });
+        });
+    }
+}
+
+// Cargar el estado guardado cuando la página se carga
+window.addEventListener('load', loadReelState);
 
 spinButton.addEventListener('click', startSpinning);
 
