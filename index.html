@@ -500,59 +500,104 @@ function startSpinning() {
     });
 }
 
+// Función para obtener las imágenes de una columna específica
 function getReelImages(reel) {
     return Array.from(reel.querySelectorAll('img')).map(img => img.src);
 }
 
-function getLineImages() {
+// Función para obtener las imágenes de todas las columnas
+function getAllReelImages() {
     return Array.from(document.querySelectorAll('.reel')).map(reel => getReelImages(reel));
 }
 
-function checkForMatches() {
-    const lineImages = getLineImages();
-    const middleRowIndex = 2; // La línea del medio en una matriz de 5 imágenes
-    const middleRow = lineImages.map(images => images[middleRowIndex]);
-    
-    const counts = {};
-    middleRow.forEach(img => {
-        counts[img] = (counts[img] || 0) + 1;
-    });
-
-    let matchCount = 0;
-    Object.values(counts).forEach(count => {
-        if (count >= 3) matchCount = Math.max(matchCount, count);
-    });
-
-    highlightLine(middleRow, matchCount);
+// Función para obtener imágenes de una línea específica
+function getLineImages(lineIndex) {
+    return Array.from(reels).map(reel => reel.children[lineIndex].src);
 }
 
-function highlightLine(middleRow, matchCount) {
-    const reels = document.querySelectorAll('.reel');
-    const middleRowIndex = 2; // La línea del medio en una matriz de 5 imágenes
+// Función para obtener las posiciones de una línea específica
+function getLinePositions(lineIndex) {
+    return Array.from(reels).map((reel, reelIndex) => ({
+        reelIndex,
+        imgIndex: lineIndex
+    }));
+}
 
-    reels.forEach((reel, index) => {
-        const images = Array.from(reel.querySelectorAll('img'));
-        const img = images[middleRowIndex];
-        if (matchCount >= 3) {
-            if (img.src === middleRow[index]) {
-                img.classList.add('highlight');
-                if (matchCount === 5) {
-                    img.classList.add('highlight-five');
-                } else if (matchCount === 4) {
-                    img.classList.add('highlight-four');
-                } else if (matchCount === 3) {
-                    img.classList.add('highlight-three');
-                }
-            }
-        }
+// Función para obtener imágenes de las líneas diagonales
+function getCrossImages(crossIndices) {
+    return crossIndices.map(index => reels[index].children[2].src); // Suponiendo la línea de la cruz es la del medio
+}
+
+// Función para obtener las posiciones de una cruz específica
+function getCrossPositions(crossIndices) {
+    return crossIndices.map(index => ({
+        reelIndex: index,
+        imgIndex: 2 // Suponiendo la línea de la cruz es la del medio
+    }));
+}
+
+// Función para contar coincidencias
+function countMatches(images) {
+    let counts = {};
+    images.forEach(img => {
+        let src = img.src;
+        counts[src] = (counts[src] || 0) + 1;
     });
 
-    setTimeout(() => {
-        document.querySelectorAll('.highlight').forEach(img => img.classList.remove('highlight'));
-        document.querySelectorAll('.highlight-five').forEach(img => img.classList.remove('highlight-five'));
-        document.querySelectorAll('.highlight-four').forEach(img => img.classList.remove('highlight-four'));
-        document.querySelectorAll('.highlight-three').forEach(img => img.classList.remove('highlight-three'));
-    }, 2000); // Elimina el resaltado después de 2 segundos
+    let maxCount = Math.max(...Object.values(counts));
+    return maxCount;
+}
+
+// Función para verificar resultados y resaltar coincidencias
+function checkForMatches() {
+    // Comprobar líneas horizontales
+    for (let i = 0; i < 3; i++) {
+        let line = getLineImages(i);
+        let count = countMatches(line);
+        if (count >= 3) {
+            highlightWinningLine(getLinePositions(i), count);
+        }
+    }
+
+    // Comprobar líneas diagonales
+    let crossLines = [
+        [0, 1, 2], // Línea diagonal desde arriba a la izquierda
+        [2, 1, 0]  // Línea diagonal desde abajo a la derecha
+    ];
+
+    crossLines.forEach(indices => {
+        let line = getCrossImages(indices);
+        let count = countMatches(line);
+        if (count >= 3) {
+            highlightWinningLine(getCrossPositions(indices), count);
+        }
+    });
+}
+
+// Función para resaltar la línea ganadora
+function highlightWinningLine(positions, count) {
+    // Primero, eliminar todas las clases de resaltado
+    reels.forEach(reel => {
+        Array.from(reel.querySelectorAll('img')).forEach(img => {
+            img.classList.remove('highlight', 'highlight-five', 'highlight-four', 'highlight-three', 'flash-twice');
+        });
+    });
+
+    // Aplicar la clase de resaltado a las imágenes coincidentes
+    positions.forEach(pos => {
+        const reel = reels[pos.reelIndex];
+        const img = reel.children[pos.imgIndex];
+        
+        if (count === 5) {
+            img.classList.add('highlight-five', 'flash-twice');
+        } else if (count === 4) {
+            img.classList.add('highlight-four', 'flash-twice');
+        } else if (count === 3) {
+            img.classList.add('highlight-three', 'flash-twice');
+        } else {
+            img.classList.add('highlight');
+        }
+    });
 }
 
 // Función para barajar las imágenes en cada columna con una organización diferente
@@ -578,35 +623,10 @@ function shuffleImages() {
         });
     });
 }
-    function highlightWinningLine(positions, count) {
-  // Primero, eliminar todas las clases de resaltado
-  reels.forEach(reel => {
-    Array.from(reel.querySelectorAll('img')).forEach(img => {
-      img.classList.remove('highlight', 'highlight-five', 'highlight-four', 'highlight-three', 'flash-twice');
-    });
-  });
 
-  // Aplicar la clase de resaltado a las imágenes coincidentes
-  positions.forEach(pos => {
-    const reel = reels[pos.reelIndex];
-    const img = reel.children[pos.imgIndex];
-    
-    if (count === 5) {
-      img.classList.add('highlight-five', 'flash-twice');
-    } else if (count === 4) {
-      img.classList.add('highlight-four', 'flash-twice');
-    } else if (count === 3) {
-      img.classList.add('highlight-three', 'flash-twice');
-    } else {
-      img.classList.add('highlight');
-    }
-  });
-}
+// Añadir el evento de clic al botón de giro
+spinButton.addEventListener('click', startSpinning);
 
-
-spinButton.addEventListener('click', () => {
-    startSpinning();
-});
 
 
   </script>
