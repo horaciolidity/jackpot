@@ -321,6 +321,32 @@
     border-color: #ff0000;
   }
 }
+    .reel img.highlight {
+  border-color: #ff6b00; /* Color para resaltar imágenes */
+}
+
+.highlight-line {
+  background-color: rgba(255, 0, 0, 0.2); /* Color para resaltar la línea completa */
+}
+@keyframes flash {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+.highlight {
+  animation: flash 0.5s ease-out; /* Añadir animación de destello */
+}
+
 
 
   </style>
@@ -425,11 +451,21 @@ const reels = document.querySelectorAll('.reel');
 const spinButton = document.querySelector('.spin');
 const spinSpeed = 100; // Velocidad de cambio entre imágenes
 const numSpins = 20; // Número de veces que cada columna "gira"
+const numImages = 8; // Número total de imágenes diferentes
+const middleLineIndex = 2; // Índice de la línea del medio (0-based index)
 
-// Función para girar una columna
+function generateUniqueImages() {
+    let images = [];
+    for (let i = 1; i <= numImages; i++) {
+        images.push(`https://jackpot-peach.vercel.app/img${i}.png`);
+    }
+    return images.sort(() => Math.random() - 0.5); // Barajar imágenes
+}
+
 function spinReel(reel, numSpins) {
     return new Promise(resolve => {
         let currentSpin = 0;
+        const images = generateUniqueImages(); // Generar imágenes únicas para esta columna
 
         function spin() {
             // Mover la última imagen al inicio del contenedor
@@ -449,97 +485,85 @@ function spinReel(reel, numSpins) {
     });
 }
 
-// Función para iniciar el giro de todas las columnas
 function startSpinning() {
     let spinPromises = [];
-    let finalPositions = [];
-
     reels.forEach((reel, index) => {
         const spinsForThisReel = numSpins + Math.floor(Math.random() * 10); // Añadir variación aleatoria a cada columna
-        finalPositions.push(getFinalReelState(reel)); // Guardar el estado final de cada reel
         spinPromises.push(spinReel(reel, spinsForThisReel));
     });
 
     Promise.all(spinPromises).then(() => {
         console.log('All reels have stopped spinning.');
-        checkWinningLine(finalPositions); // Verificar coincidencias
-        saveReelState(finalPositions); // Guardar el estado de los reels en el localStorage
+        checkResults();
     });
 }
 
-// Función para obtener el estado final de un reel
-function getFinalReelState(reel) {
-    return Array.from(reel.children).map(img => img.src);
-}
-
-// Función para guardar el estado de los reels en el localStorage
-function saveReelState(state) {
-    localStorage.setItem('reelState', JSON.stringify(state));
-}
-
-// Función para verificar coincidencias en la línea central y resaltar las líneas
-function checkWinningLine(positions) {
-    const winningLine = 4; // Línea central (índice 4)
-    const imageCounts = {}; // Para contar las coincidencias de cada imagen
-    const lineImages = positions.map(reel => reel[winningLine]); // Imágenes en la línea central
-
-    // Contar cuántas veces aparece cada imagen en la línea central
-    lineImages.forEach(imgSrc => {
-        if (imgSrc) {
-            imageCounts[imgSrc] = (imageCounts[imgSrc] || 0) + 1;
-        }
-    });
-
-    // Verificar si hay 5, 4 o 3 coincidencias
-    Object.values(imageCounts).forEach(count => {
-        if (count === 5) {
-            highlightWinningLine('five');
-        } else if (count === 4) {
-            highlightWinningLine('four');
-        } else if (count === 3) {
-            highlightWinningLine('three');
-        }
+function highlightLine(lineIndex) {
+    const reels = document.querySelectorAll('.reel');
+    reels.forEach(reel => {
+        const imgs = reel.querySelectorAll('img');
+        imgs[lineIndex].classList.add('highlight');
     });
 }
 
-// Función para resaltar la línea ganadora
-function highlightWinningLine(type) {
-    // Quitar resaltado previo
-    document.querySelectorAll('.reel img').forEach(img => {
-        img.classList.remove('highlight-five', 'highlight-four', 'highlight-three');
-    });
+function clearHighlights() {
+    document.querySelectorAll('.reel img').forEach(img => img.classList.remove('highlight'));
+}
 
-    const highlightClass = {
-        'five': 'highlight-five',
-        'four': 'highlight-four',
-        'three': 'highlight-three'
-    }[type];
+function checkResults() {
+    clearHighlights();
+    const reelImages = Array.from(reels).map(reel => 
+        Array.from(reel.querySelectorAll('img')).map(img => img.src)
+    );
 
-    if (highlightClass) {
-        const reels = document.querySelectorAll('.reel');
-        reels.forEach(reel => {
-            reel.children[4].classList.add(highlightClass);
+    // Verificar la línea del medio
+    const middleLine = reelImages.map(images => images[middleLineIndex]);
+    const counts = {};
+
+    middleLine.forEach(img => counts[img] = (counts[img] || 0) + 1);
+
+    const matchedImages = Object.keys(counts).filter(img => counts[img] >= 3);
+
+    if (matchedImages.length) {
+        // Resaltar la línea del medio según el número de coincidencias
+        middleLine.forEach((img, index) => {
+            if (counts[img] >= 3) {
+                highlightLine(index);
+            }
         });
+
+        if (matchedImages.length === 1) {
+            if (counts[matchedImages[0]] === 5) {
+                alert('¡5 coincidencias!');
+            } else if (counts[matchedImages[0]] === 4) {
+                alert('¡4 coincidencias!');
+            } else if (counts[matchedImages[0]] === 3) {
+                alert('¡3 coincidencias!');
+            }
+        }
     }
 }
-
-// Función para cargar el estado de los reels desde el localStorage al cargar la página
-function loadReelState() {
-    const savedState = JSON.parse(localStorage.getItem('reelState'));
-    if (savedState) {
-        reels.forEach((reel, index) => {
-            const children = Array.from(reel.children);
-            savedState[index].forEach((src, i) => {
-                children[i].src = src;
-            });
-        });
-    }
-}
-
-// Cargar el estado guardado cuando la página se carga
-window.addEventListener('load', loadReelState);
 
 spinButton.addEventListener('click', startSpinning);
+
+// Guardar y cargar el estado del último giro en el almacenamiento local
+window.addEventListener('load', () => {
+    const savedState = localStorage.getItem('slotState');
+    if (savedState) {
+        const state = JSON.parse(savedState);
+        state.forEach((column, index) => {
+            const reel = reels[index];
+            reel.innerHTML = column.map(src => `<img src="${src}" class="reel-symbol" alt="Symbol">`).join('');
+        });
+    }
+});
+
+window.addEventListener('beforeunload', () => {
+    const state = Array.from(reels).map(reel => 
+        Array.from(reel.querySelectorAll('img')).map(img => img.src)
+    );
+    localStorage.setItem('slotState', JSON.stringify(state));
+});
 
   </script>
 </html>
