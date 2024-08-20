@@ -20,11 +20,17 @@
       align-items: center;
     }
 
-    .game-container {
-      width: 1000px;
-      display: flex;
-      flex-direction: column;
-    }
+  .game-container {
+   width: 100%;
+   max-width: 1000px;
+   padding: 10px;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   margin: 0 auto; /* Para centrar el contenedor */
+}
+
 
     header {
       background: transparent;
@@ -34,7 +40,7 @@
     }
 
     h1.game-title {
-      font-size: 48px;
+      font-size: 6vw;
       margin: 0 0 10px 0;
       text-shadow: 2px 2px 4px #000000, 0 0 10px #ffd700;
       color: #ffffff;
@@ -120,6 +126,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 0 auto;
 }
 
 .reels {
