@@ -266,7 +266,7 @@
       flex-direction: column;
       align-items: flex-start;
     }
-    .reel img.highlight {
+.reel img.highlight {
   border: 2px solid #ff0000; /* Color de borde para resaltar */
   animation: highlightAnimation 1s ease-in-out;
 }
@@ -321,31 +321,15 @@
     border-color: #ff0000;
   }
 }
-    .reel img.highlight {
-  border-color: #ff6b00; /* Color para resaltar imágenes */
-}
 
-.highlight-line {
-  background-color: rgba(255, 0, 0, 0.2); /* Color para resaltar la línea completa */
-}
 @keyframes flash {
   0% {
     opacity: 0;
     transform: scale(1);
   }
   50% {
-    opacity: 1;
-    transform: scale(1.2);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1);
-  }
-}
+    opacity
 
-.highlight {
-  animation: flash 0.5s ease-out; /* Añadir animación de destello */
-}
 
 
 
@@ -477,6 +461,7 @@ function spinReel(reel, numSpins) {
 
 // Función para iniciar el giro de todas las columnas
 function startSpinning() {
+    shuffleImages(); // Barajar las imágenes antes de girar
     let spinPromises = [];
     reels.forEach((reel, index) => {
         const spinsForThisReel = numSpins + Math.floor(Math.random() * 10); // Añadir variación aleatoria a cada columna
@@ -518,23 +503,29 @@ function checkForMatches() {
 function highlightLine(middleRow, matchCount) {
     const reels = document.querySelectorAll('.reel');
     const middleRowIndex = 2; // La línea del medio en una matriz de 5 imágenes
-    
+
     reels.forEach((reel, index) => {
         const images = Array.from(reel.querySelectorAll('img'));
         const img = images[middleRowIndex];
         if (matchCount >= 3) {
             if (img.src === middleRow[index]) {
                 img.classList.add('highlight');
-                if (matchCount >= 5) {
-                    img.classList.add('flash');
+                if (matchCount === 5) {
+                    img.classList.add('highlight-five');
+                } else if (matchCount === 4) {
+                    img.classList.add('highlight-four');
+                } else if (matchCount === 3) {
+                    img.classList.add('highlight-three');
                 }
             }
         }
     });
-    
+
     setTimeout(() => {
         document.querySelectorAll('.highlight').forEach(img => img.classList.remove('highlight'));
-        document.querySelectorAll('.flash').forEach(img => img.classList.remove('flash'));
+        document.querySelectorAll('.highlight-five').forEach(img => img.classList.remove('highlight-five'));
+        document.querySelectorAll('.highlight-four').forEach(img => img.classList.remove('highlight-four'));
+        document.querySelectorAll('.highlight-three').forEach(img => img.classList.remove('highlight-three'));
     }, 2000); // Elimina el resaltado después de 2 segundos
 }
 
@@ -547,9 +538,10 @@ function shuffleImages() {
         'https://jackpot-peach.vercel.app/img4.png',
         'https://jackpot-peach.vercel.app/img5.png',
         'https://jackpot-peach.vercel.app/img6.png',
-        'https://jackpot-peach.vercel.app/img7.png'
+        'https://jackpot-peach.vercel.app/img7.png',
+        'https://jackpot-peach.vercel.app/img8.png'
     ];
-    
+
     reels.forEach(reel => {
         const images = Array.from(reel.querySelectorAll('img'));
         const shuffledImages = allImages.sort(() => Math.random() - 0.5);
@@ -560,7 +552,6 @@ function shuffleImages() {
 }
 
 spinButton.addEventListener('click', () => {
-    shuffleImages();
     startSpinning();
 });
 
