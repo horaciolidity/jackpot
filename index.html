@@ -273,17 +273,17 @@
 
 .reel img.highlight-five {
   border: 2px solid #00ff00; /* Color de borde para 5 coincidencias */
-  animation: highlightFiveAnimation 1s ease-in-out;
+  animation: highlightFiveAnimation 1s ease-in-out, scaleUpDown 1s ease-in-out;
 }
 
 .reel img.highlight-four {
   border: 2px solid #ffff00; /* Color de borde para 4 coincidencias */
-  animation: highlightFourAnimation 1s ease-in-out;
+  animation: highlightFourAnimation 1s ease-in-out, scaleUpDown 1s ease-in-out;
 }
 
 .reel img.highlight-three {
   border: 2px solid #ff0000; /* Color de borde para 3 coincidencias */
-  animation: highlightThreeAnimation 1s ease-in-out;
+  animation: highlightThreeAnimation 1s ease-in-out, scaleUpDown 1s ease-in-out;
 }
 
 @keyframes highlightFiveAnimation {
@@ -322,23 +322,40 @@
   }
 }
 
-@keyframes flash {
-  0% {
-    opacity: 0;
+@keyframes scaleUpDown {
+  0%, 100% {
     transform: scale(1);
   }
   50% {
-    opacity: 1;
     transform: scale(1.2);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1);
   }
 }
 
 .highlight {
   animation: flash 0.5s ease-out; /* Añadir animación de destello */
+}
+
+.flash-twice {
+  animation: flashTwice 1s ease-in-out;
+}
+
+@keyframes flashTwice {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  25% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  50% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  75% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
 }
 
 
@@ -561,6 +578,31 @@ function shuffleImages() {
         });
     });
 }
+    function highlightWinningLine(positions, count) {
+  // Primero, eliminar todas las clases de resaltado
+  reels.forEach(reel => {
+    Array.from(reel.querySelectorAll('img')).forEach(img => {
+      img.classList.remove('highlight', 'highlight-five', 'highlight-four', 'highlight-three', 'flash-twice');
+    });
+  });
+
+  // Aplicar la clase de resaltado a las imágenes coincidentes
+  positions.forEach(pos => {
+    const reel = reels[pos.reelIndex];
+    const img = reel.children[pos.imgIndex];
+    
+    if (count === 5) {
+      img.classList.add('highlight-five', 'flash-twice');
+    } else if (count === 4) {
+      img.classList.add('highlight-four', 'flash-twice');
+    } else if (count === 3) {
+      img.classList.add('highlight-three', 'flash-twice');
+    } else {
+      img.classList.add('highlight');
+    }
+  });
+}
+
 
 spinButton.addEventListener('click', () => {
     startSpinning();
