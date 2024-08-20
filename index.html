@@ -356,48 +356,38 @@
   <script>
 const reels = document.querySelectorAll('.reel');
 const spinButton = document.querySelector('.spin');
-const symbolHeight = 80; // Altura de cada símbolo individual
-const symbolsPerReel = 5; // Número de símbolos por reel
-const totalSymbols = symbolsPerReel * 2; // Incluyendo la parte duplicada para el bucle
+const spinSpeed = 100; // Velocidad de cambio entre imágenes
+const numSpins = 20; // Número de veces que cada columna "gira"
 
-// Crear un bucle continuo para los reels sin duplicar visualmente
-function spinReel(reel, spinDuration) {
+// Función para girar una columna
+function spinReel(reel, numSpins) {
     return new Promise(resolve => {
-        const symbols = reel.querySelectorAll('img');
-        const reelHeight = symbolHeight * totalSymbols;
+        let currentSpin = 0;
 
-        let startTime = null;
-        let currentY = Math.floor(Math.random() * reelHeight); // Posición inicial aleatoria
+        function spin() {
+            // Mover la última imagen al inicio del contenedor
+            const lastChild = reel.lastElementChild;
+            reel.insertBefore(lastChild, reel.firstElementChild);
 
-        function spin(timestamp) {
-            if (!startTime) startTime = timestamp;
-            const elapsedTime = timestamp - startTime;
+            currentSpin++;
 
-            // Incrementar la posición Y para simular el giro
-            currentY = (currentY + (reelHeight * (elapsedTime / spinDuration))) % reelHeight;
-            reel.style.transform = `translateY(-${currentY}px)`;
-
-            // Continuar el giro hasta que se cumpla la duración
-            if (elapsedTime < spinDuration) {
-                requestAnimationFrame(spin);
+            if (currentSpin < numSpins) {
+                setTimeout(spin, spinSpeed);
             } else {
-                // Alinear la columna a la posición más cercana de un símbolo
-                const finalPosition = Math.round(currentY / symbolHeight) * symbolHeight;
-                reel.style.transform = `translateY(-${finalPosition}px)`;
                 resolve();
             }
         }
 
-        requestAnimationFrame(spin);
+        spin();
     });
 }
 
-// Iniciar el giro de todas las columnas
+// Función para iniciar el giro de todas las columnas
 function startSpinning() {
     let spinPromises = [];
     reels.forEach((reel, index) => {
-        const spinDuration = 3000 + (index * 500); // Duración de giro variable para cada columna
-        spinPromises.push(spinReel(reel, spinDuration));
+        const spinsForThisReel = numSpins + Math.floor(Math.random() * 10); // Añadir variación aleatoria a cada columna
+        spinPromises.push(spinReel(reel, spinsForThisReel));
     });
 
     Promise.all(spinPromises).then(() => {
