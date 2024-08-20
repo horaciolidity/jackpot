@@ -271,7 +271,46 @@
   animation: highlightAnimation 1s ease-in-out;
 }
 
-@keyframes highlightAnimation {
+.reel img.highlight-five {
+  border: 2px solid #00ff00; /* Color de borde para 5 coincidencias */
+  animation: highlightFiveAnimation 1s ease-in-out;
+}
+
+.reel img.highlight-four {
+  border: 2px solid #ffff00; /* Color de borde para 4 coincidencias */
+  animation: highlightFourAnimation 1s ease-in-out;
+}
+
+.reel img.highlight-three {
+  border: 2px solid #ff0000; /* Color de borde para 3 coincidencias */
+  animation: highlightThreeAnimation 1s ease-in-out;
+}
+
+@keyframes highlightFiveAnimation {
+  0% {
+    border-color: #00ff00;
+  }
+  50% {
+    border-color: #ffd700;
+  }
+  100% {
+    border-color: #00ff00;
+  }
+}
+
+@keyframes highlightFourAnimation {
+  0% {
+    border-color: #ffff00;
+  }
+  50% {
+    border-color: #ffd700;
+  }
+  100% {
+    border-color: #ffff00;
+  }
+}
+
+@keyframes highlightThreeAnimation {
   0% {
     border-color: #ff0000;
   }
@@ -282,6 +321,7 @@
     border-color: #ff0000;
   }
 }
+
 
   </style>
 </head>
@@ -437,31 +477,50 @@ function saveReelState(state) {
     localStorage.setItem('reelState', JSON.stringify(state));
 }
 
-// Función para verificar coincidencias en la línea central y resaltar la línea
+// Función para verificar coincidencias en la línea central y resaltar las líneas
 function checkWinningLine(positions) {
     const winningLine = 4; // Línea central (índice 4)
-    let isWinning = true;
-    const firstImageSrc = positions[0][winningLine]; // Imagen de referencia para comparación
+    const imageCounts = {}; // Para contar las coincidencias de cada imagen
+    const lineImages = positions.map(reel => reel[winningLine]); // Imágenes en la línea central
 
-    for (let i = 0; i < positions.length; i++) {
-        if (positions[i][winningLine] !== firstImageSrc) {
-            isWinning = false;
-            break;
+    // Contar cuántas veces aparece cada imagen en la línea central
+    lineImages.forEach(imgSrc => {
+        if (imgSrc) {
+            imageCounts[imgSrc] = (imageCounts[imgSrc] || 0) + 1;
         }
-    }
+    });
 
-    if (isWinning) {
-        highlightWinningLine();
-    }
+    // Verificar si hay 5, 4 o 3 coincidencias
+    Object.values(imageCounts).forEach(count => {
+        if (count === 5) {
+            highlightWinningLine('five');
+        } else if (count === 4) {
+            highlightWinningLine('four');
+        } else if (count === 3) {
+            highlightWinningLine('three');
+        }
+    });
 }
 
 // Función para resaltar la línea ganadora
-function highlightWinningLine() {
-    // Añadir una clase que resalte la línea central
-    const reels = document.querySelectorAll('.reel');
-    reels.forEach(reel => {
-        reel.children[4].classList.add('highlight');
+function highlightWinningLine(type) {
+    // Quitar resaltado previo
+    document.querySelectorAll('.reel img').forEach(img => {
+        img.classList.remove('highlight-five', 'highlight-four', 'highlight-three');
     });
+
+    const highlightClass = {
+        'five': 'highlight-five',
+        'four': 'highlight-four',
+        'three': 'highlight-three'
+    }[type];
+
+    if (highlightClass) {
+        const reels = document.querySelectorAll('.reel');
+        reels.forEach(reel => {
+            reel.children[4].classList.add(highlightClass);
+        });
+    }
 }
 
 // Función para cargar el estado de los reels desde el localStorage al cargar la página
