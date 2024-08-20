@@ -328,9 +328,18 @@
     transform: scale(1);
   }
   50% {
-    opacity
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
 
-
+.highlight {
+  animation: flash 0.5s ease-out; /* Añadir animación de destello */
+}
 
 
   </style>
@@ -529,7 +538,7 @@ function highlightLine(middleRow, matchCount) {
     }, 2000); // Elimina el resaltado después de 2 segundos
 }
 
-// Función para barajar las imágenes en cada columna
+// Función para barajar las imágenes en cada columna con una organización diferente
 function shuffleImages() {
     const allImages = [
         'https://jackpot-peach.vercel.app/img1.png',
@@ -542,11 +551,13 @@ function shuffleImages() {
         'https://jackpot-peach.vercel.app/img8.png'
     ];
 
-    reels.forEach(reel => {
-        const images = Array.from(reel.querySelectorAll('img'));
-        const shuffledImages = allImages.sort(() => Math.random() - 0.5);
-        images.forEach((img, index) => {
-            img.src = shuffledImages[index % shuffledImages.length];
+    reels.forEach((reel, index) => {
+        const images = Array.from(allImages); // Clonar la lista de imágenes
+        const shuffledImages = images.sort(() => Math.random() - 0.5); // Barajar la lista
+        const imagesInColumn = shuffledImages.slice(0, images.length); // Obtener una permutación única para esta columna
+        const imgElements = reel.querySelectorAll('img');
+        imgElements.forEach((img, idx) => {
+            img.src = imagesInColumn[idx % imagesInColumn.length]; // Asignar la imagen barajada
         });
     });
 }
@@ -554,6 +565,7 @@ function shuffleImages() {
 spinButton.addEventListener('click', () => {
     startSpinning();
 });
+
 
   </script>
 </html>
