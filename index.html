@@ -450,8 +450,8 @@
             <button class="increase-bet"><i class="fas fa-plus"></i></button>
           </div>
           <div class="balance-bet">
-            <span class="credit">Credit: $100</span>
-            <span class="bet">Bet: $1</span>
+            <span class="credit">Credit: $10</span>
+            <span class="bet">Bet: $2</span>
     <div class="winnings">Ganancias: 0</div>
 
           </div>
@@ -473,9 +473,9 @@ const creditDisplay = document.querySelector('.credit');
 const betDisplay = document.querySelector('.bet');
 const winningsDisplay = document.querySelector('.winnings');
 
-let credit = 100; // Crédito inicial
+let credit = 10; // Crédito inicial
 let bet = 2; // Apuesta inicial
-let freeSpins = 10; // Giros gratis iniciales
+let freeSpins = 5; // Giros gratis iniciales
 
 const spinSpeed = 100; // Velocidad de cambio entre imágenes
 const numSpins = 20; // Número de veces que cada columna "gira"
@@ -571,7 +571,7 @@ function checkForMatches() {
     const lineImages = getLineImages();
     let totalWinnings = 0;
 
-    for (let row = 0; row < 3; row++) {
+    for (let row = 0; row < 5; row++) {
         const rowImages = lineImages.map(images => images[row]);
         const counts = {};
         rowImages.forEach(img => {
@@ -612,7 +612,6 @@ function highlightMatches(row, matchImg, matchCount) {
         }
     });
 }
-
 
 // Función para actualizar la pantalla
 function updateDisplay(winnings) {
