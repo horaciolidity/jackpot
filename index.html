@@ -469,21 +469,19 @@
   <script>
 const reels = document.querySelectorAll('.reel');
 const spinButton = document.querySelector('.spin');
-const spinSpeed = 100;
-const numSpins = 20;
-const betAmount = 1; // Valor del bet
-let totalWinnings = 0;
+const spinSpeed = 100; // Velocidad de cambio entre imágenes
+const numSpins = 20; // Número de veces que cada columna "gira"
 
-// Pagos por coincidencias
+// Pagos para diferentes combinaciones
 const payouts = {
-  'https://jackpot-peach.vercel.app/img1.png': {3: 30, 4: 50, 5: 100},
-  'https://jackpot-peach.vercel.app/img2.png': {3: 1, 4: 3, 5: 7},
-  'https://jackpot-peach.vercel.app/img3.png': {3: 2, 4: 5, 5: 8},
-  'https://jackpot-peach.vercel.app/img4.png': {3: 10, 4: 20, 5: 30},
-  'https://jackpot-peach.vercel.app/img5.png': {3: 3, 4: 7, 5: 12},
-  'https://jackpot-peach.vercel.app/img6.png': {3: 15, 4: 25, 5: 35},
-  'https://jackpot-peach.vercel.app/img7.png': {3: 20, 4: 30, 5: 50},
-  'https://jackpot-peach.vercel.app/img8.png': {3: 5, 4: 10, 5: 15}
+    'https://jackpot-peach.vercel.app/img1.png': { 3: 10, 4: 20, 5: 50 },
+    'https://jackpot-peach.vercel.app/img2.png': { 3: 15, 4: 30, 5: 60 },
+    'https://jackpot-peach.vercel.app/img3.png': { 3: 20, 4: 40, 5: 80 },
+    'https://jackpot-peach.vercel.app/img4.png': { 3: 25, 4: 50, 5: 100 },
+    'https://jackpot-peach.vercel.app/img5.png': { 3: 30, 4: 60, 5: 120 },
+    'https://jackpot-peach.vercel.app/img6.png': { 3: 35, 4: 70, 5: 140 },
+    'https://jackpot-peach.vercel.app/img7.png': { 3: 40, 4: 80, 5: 160 },
+    'https://jackpot-peach.vercel.app/img8.png': { 3: 45, 4: 90, 5: 180 },
 };
 
 // Función para girar una columna
@@ -492,6 +490,7 @@ function spinReel(reel, numSpins) {
         let currentSpin = 0;
 
         function spin() {
+            // Mover la última imagen al inicio del contenedor
             const lastChild = reel.lastElementChild;
             reel.insertBefore(lastChild, reel.firstElementChild);
 
@@ -510,18 +509,28 @@ function spinReel(reel, numSpins) {
 
 // Función para iniciar el giro de todas las columnas
 function startSpinning() {
-    shuffleImages();
-    let spinPromises = [];
-    reels.forEach((reel) => {
-        const spinsForThisReel = numSpins + Math.floor(Math.random() * 10);
-        spinPromises.push(spinReel(reel, spinsForThisReel));
-    });
+    try {
+        shuffleImages(); // Barajar las imágenes antes de girar
+        let spinPromises = [];
+        reels.forEach((reel) => {
+            const spinsForThisReel = numSpins + Math.floor(Math.random() * 10); // Añadir variación aleatoria a cada columna
+            spinPromises.push(spinReel(reel, spinsForThisReel));
+        });
 
-    Promise.all(spinPromises).then(() => {
-        const winnings = checkForMatches();
-        console.log('All reels have stopped spinning.');
-        updateTotalWinnings(winnings);
-    });
+        Promise.all(spinPromises).then(() => {
+            try {
+                const winnings = checkForMatches();
+                updateDisplay(winnings);
+                console.log('All reels have stopped spinning.');
+            } catch (error) {
+                console.error('Error checking for matches:', error);
+            }
+        }).catch(error => {
+            console.error('Error spinning reels:', error);
+        });
+    } catch (error) {
+        console.error('Error starting spin:', error);
+    }
 }
 
 function getReelImages(reel) {
@@ -534,6 +543,7 @@ function getLineImages() {
 
 function checkForMatches() {
     const lineImages = getLineImages();
+    const matchPositions = [];
     let totalWinnings = 0;
 
     for (let row = 0; row < 5; row++) {
@@ -543,47 +553,69 @@ function checkForMatches() {
             counts[img] = (counts[img] || 0) + 1;
         });
 
+        let matchCount = 0;
+        let matchImg = null;
         Object.entries(counts).forEach(([img, count]) => {
             if (count >= 3) {
-                const payout = payouts[img][count] || 0;
-                totalWinnings += payout;
-                highlightWinningLine([{ reelIndex: lineImages.findIndex(images => images[row] === img), imgIndex: row }], count);
+                matchCount = Math.max(matchCount, count);
+                matchImg = img;
             }
         });
+
+        if (matchCount >= 3) {
+            // Resaltar todas las imágenes coincidentes en esta línea
+            for (let idx = 0; idx < lineImages.length; idx++) {
+                const images = lineImages[idx];
+                if (images[row] === matchImg) {
+                    matchPositions.push({ reelIndex: idx, imgIndex: row });
+                }
+            }
+
+            // Calcular el pago
+            const payout = payouts[matchImg] && payouts[matchImg][matchCount];
+            if (payout) {
+                totalWinnings += payout;
+            }
+
+            highlightWinningLine(matchImg, row);
+        }
     }
 
     return totalWinnings;
 }
 
-function highlightWinningLine(positions, count) {
+function highlightWinningLine(matchImg, row) {
+    // Primero, eliminar todas las clases de resaltado
     reels.forEach(reel => {
         Array.from(reel.querySelectorAll('img')).forEach(img => {
             img.classList.remove('highlight', 'highlight-five', 'highlight-four', 'highlight-three', 'flash-twice');
         });
     });
 
-    positions.forEach(pos => {
-        const reel = reels[pos.reelIndex];
-        const img = reel.children[pos.imgIndex];
-
-        if (count === 5) {
-            img.classList.add('highlight-five', 'flash-twice');
-        } else if (count === 4) {
-            img.classList.add('highlight-four', 'flash-twice');
-        } else if (count === 3) {
-            img.classList.add('highlight-three', 'flash-twice');
-        } else {
-            img.classList.add('highlight');
+    // Aplicar la clase de resaltado a todas las imágenes coincidentes en la línea
+    reels.forEach((reel, idx) => {
+        const img = reel.children[row];
+        if (img.src === matchImg) {
+            if (row >= 5) { // Asumiendo que row > 5 no es una línea ganadora
+                img.classList.add('highlight-five', 'flash-twice');
+            } else if (row === 4) {
+                img.classList.add('highlight-four', 'flash-twice');
+            } else if (row === 3) {
+                img.classList.add('highlight-three', 'flash-twice');
+            } else {
+                img.classList.add('highlight');
+            }
         }
     });
 
+    // Eliminar el resaltado después de 2 segundos
     setTimeout(() => {
         reels.forEach(reel => {
             Array.from(reel.querySelectorAll('img')).forEach(img => {
                 img.classList.remove('highlight', 'highlight-five', 'highlight-four', 'highlight-three', 'flash-twice');
             });
         });
-    }, 2000);
+    }, 2000); // Elimina el resaltado después de 2 segundos
 }
 
 function shuffleImages() {
@@ -599,25 +631,25 @@ function shuffleImages() {
     ];
 
     reels.forEach((reel) => {
-        const images = Array.from(allImages);
-        const shuffledImages = images.sort(() => Math.random() - 0.5);
-        const imagesInColumn = shuffledImages.slice(0, images.length);
+        const images = Array.from(allImages); // Clonar la lista de imágenes
+        const shuffledImages = images.sort(() => Math.random() - 0.5); // Barajar la lista
+        const imagesInColumn = shuffledImages.slice(0, images.length); // Obtener una permutación única para esta columna
         const imgElements = reel.querySelectorAll('img');
         imgElements.forEach((img, idx) => {
-            img.src = imagesInColumn[idx % imagesInColumn.length];
+            img.src = imagesInColumn[idx % imagesInColumn.length]; // Asignar la imagen barajada
         });
     });
 }
 
-function updateTotalWinnings(winnings) {
-    totalWinnings += winnings;
-    document.querySelector('.total-winnings').textContent = `Total Winnings: $${totalWinnings}`;
+function updateDisplay(winnings) {
+    // Actualiza el estado del juego con las ganancias
+    const winningsDisplay = document.querySelector('.winnings');
+    winningsDisplay.textContent = `Ganancias: ${winnings}`;
 }
 
 spinButton.addEventListener('click', () => {
     startSpinning();
 });
-
 
   </script>
 </html>
