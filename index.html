@@ -601,11 +601,18 @@ function highlightMatches(row, matchImg, matchCount) {
     reels.forEach((reel, idx) => {
         const img = reel.querySelectorAll('img')[row];
         if (img.src === matchImg) {
-            img.classList.add(`highlight-${matchCount}`);
-            setTimeout(() => img.classList.remove(`highlight-${matchCount}`), 2000);
+            const highlightClass = `highlight-${matchCount}`;
+            img.classList.add(highlightClass);
+            // Añadir la clase de animación para el agrandamiento
+            img.classList.add('flash-twice');
+            setTimeout(() => {
+                img.classList.remove(highlightClass);
+                img.classList.remove('flash-twice');
+            }, 2000);
         }
     });
 }
+
 
 // Función para actualizar la pantalla
 function updateDisplay(winnings) {
