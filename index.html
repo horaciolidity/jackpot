@@ -450,7 +450,7 @@
             <button class="increase-bet"><i class="fas fa-plus"></i></button>
           </div>
           <div class="balance-bet">
-            <span class="credit">Credit: $</span>
+            <span class="credit">Credit: $10 free</span>
             <span class="bet">Bet: $2</span>
     <div class="winnings">Ganancias: 0</div>
 
@@ -524,20 +524,18 @@ function spinReel(reel, numSpins) {
 
 // Función para iniciar el giro de todas las columnas
 function startSpinning() {
-    // Verifica si hay suficiente crédito o giros gratuitos disponibles
     if (credit < bet && freeSpins <= 0) {
         alert("No tienes suficiente crédito para continuar.");
         return;
     }
 
-    // Deduce el crédito o utiliza un giro gratuito
     if (freeSpins > 0) {
         freeSpins--;
     } else {
-        credit -= bet;
+        credit -= bet; // Descuenta la apuesta del crédito total
     }
 
-    updateDisplay(0);
+    updateDisplay(0); // Actualiza la pantalla con el crédito actual
 
     // Barajar las imágenes de cada columna de manera diferente
     reels.forEach(reel => {
@@ -553,8 +551,8 @@ function startSpinning() {
 
     Promise.all(spinPromises).then(() => {
         const winnings = checkForMatches();
-        credit += winnings;
-        updateDisplay(winnings);
+        credit += winnings; // Agrega las ganancias al crédito
+        updateDisplay(winnings); // Actualiza la pantalla con las ganancias
     });
 }
 
