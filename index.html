@@ -502,15 +502,15 @@ button:active {
   <script>
 const reels = document.querySelectorAll('.reel');
 const spinButton = document.querySelector('.spin');
-const increaseBetButton = document.querySelector('.increase-bet');
-const decreaseBetButton = document.querySelector('.decrease-bet');
 const creditDisplay = document.querySelector('.credit');
 const betDisplay = document.querySelector('.bet');
 const winningsDisplay = document.querySelector('.winnings');
+const increaseBetButton = document.querySelector('.increase-bet');
+const decreaseBetButton = document.querySelector('.decrease-bet');
 
 let credit = 10; // Crédito inicial
-let bet = 2; // Apuesta por giro inicial
-let activeLines = 1; // Número de líneas activas
+let bet = 2; // Apuesta por giro
+let activeLines = 1; // Líneas activas (1 para la línea 3)
 
 const spinSpeed = 100; // Velocidad de cambio entre imágenes
 const numSpins = 20; // Número de veces que cada columna "gira"
@@ -526,6 +526,55 @@ const payouts = {
     'https://jackpot-peach.vercel.app/img7.png': { 3: 0, 4: 10, 5: 28 },
     'https://jackpot-peach.vercel.app/img8.png': { 3: 1, 4: 3, 5: 7 },
 };
+
+// Función para dibujar las líneas activas
+function drawActiveLines() {
+    // Limpiar las líneas existentes
+    const linesContainer = document.querySelector('.lines-container');
+    linesContainer.innerHTML = '';
+
+    // Dibujar nuevas líneas
+    for (let i = 0; i < activeLines; i++) {
+        const lineIndex = 2 + i - Math.floor((activeLines - 1) / 2);
+        const line = document.createElement('div');
+        line.className = 'active-line';
+        line.style.top = `${20 * lineIndex}%`; // Ajusta la posición según el tamaño del slot
+        linesContainer.appendChild(line);
+    }
+}
+
+// Función para actualizar la cantidad de líneas activas y la apuesta
+function updateBet() {
+    switch (activeLines) {
+        case 1:
+            bet = 2;
+            break;
+        case 3:
+            bet = 6;
+            break;
+        case 5:
+            bet = 10;
+            break;
+    }
+    updateDisplay(0); // Actualiza la pantalla sin ganancias
+    drawActiveLines(); // Redibujar las líneas activas
+}
+
+// Función para incrementar la apuesta
+increaseBetButton.addEventListener('click', () => {
+    if (activeLines < 5) {
+        activeLines += 2; // Incrementar de 1 a 3 y de 3 a 5 líneas
+        updateBet();
+    }
+});
+
+// Función para disminuir la apuesta
+decreaseBetButton.addEventListener('click', () => {
+    if (activeLines > 1) {
+        activeLines -= 2; // Decrementar de 5 a 3 y de 3 a 1 líneas
+        updateBet();
+    }
+});
 
 // Función para barajar imágenes de manera aleatoria
 function shuffle(array) {
@@ -565,6 +614,7 @@ function startSpinning() {
     }
 
     credit -= bet; // Descontar la apuesta del crédito
+
     updateDisplay(0); // Mostrar el crédito actualizado
 
     // Barajar las imágenes de cada columna de manera diferente
@@ -601,8 +651,7 @@ function checkForMatches() {
     const lineImages = getLineImages();
     let totalWinnings = 0;
 
-    // Iterar solo sobre las líneas activas
-    for (let row = 3 - Math.floor(activeLines / 2); row < 3 + Math.ceil(activeLines / 2); row++) {
+    for (let row = 0; row < 5; row++) {
         const rowImages = lineImages.map(images => images[row]);
         const counts = {};
         rowImages.forEach(img => {
@@ -619,13 +668,25 @@ function checkForMatches() {
             }
         });
 
-        if (matchCount >= 3) {
+        // Solo cuenta si la coincidencia está en una línea activa
+        if (matchCount >= 3 && isLineActive(row + 1)) {
             highlightMatches(row, matchImg, matchCount);
             totalWinnings += payouts[matchImg][matchCount] || 0;
         }
     }
 
     return totalWinnings;
+}
+
+// Verifica si una línea está activa
+function isLineActive(lineNumber) {
+    const activeLinesRange = {
+        1: [3],
+        3: [2, 3, 4],
+        5: [1, 2, 3, 4, 5]
+    };
+
+    return activeLinesRange[activeLines].includes(lineNumber);
 }
 
 // Función para resaltar y agrandar las coincidencias
@@ -635,24 +696,13 @@ function highlightMatches(row, matchImg, matchCount) {
         if (img.src === matchImg) {
             const highlightClass = `highlight-${matchCount}`;
             img.classList.add(highlightClass);
+            // Añadir la clase de animación para el agrandamiento
             img.classList.add('flash-twice');
             setTimeout(() => {
                 img.classList.remove(highlightClass);
                 img.classList.remove('flash-twice');
             }, 2000);
         }
-    });
-}
-
-// Función para resaltar las líneas activas
-function highlightActiveLines() {
-    reels.forEach(reel => {
-        Array.from(reel.querySelectorAll('img')).forEach((img, index) => {
-            img.classList.remove('active-line');
-            if (index >= 3 - Math.floor(activeLines / 2) && index < 3 + Math.ceil(activeLines / 2)) {
-                img.classList.add('active-line');
-            }
-        });
     });
 }
 
@@ -663,34 +713,12 @@ function updateDisplay(winnings) {
     winningsDisplay.textContent = `Ganancias: $${winnings}`;
 }
 
-// Función para incrementar la apuesta
-function increaseBet() {
-    if (activeLines < 5) {
-        activeLines += 2;
-        bet = activeLines * 2;
-        highlightActiveLines();
-        updateDisplay(0); // Actualizar la pantalla con el nuevo valor de apuesta
-    }
-}
-
-// Función para disminuir la apuesta
-function decreaseBet() {
-    if (activeLines > 1) {
-        activeLines -= 2;
-        bet = activeLines * 2;
-        highlightActiveLines();
-        updateDisplay(0); // Actualizar la pantalla con el nuevo valor de apuesta
-    }
-}
-
-// Event listeners para los botones de incremento y decremento de apuesta
-increaseBetButton.addEventListener('click', increaseBet);
-decreaseBetButton.addEventListener('click', decreaseBet);
-
 // Event listener para el botón de giro
 spinButton.addEventListener('click', startSpinning);
 
-
+// Iniciar con las líneas y apuesta predeterminadas
+drawActiveLines();
+updateBet();
 
   </script>
 </html>
