@@ -603,7 +603,8 @@ function checkForMatches() {
         let matchCount = 0;
         let matchImg = null;
         Object.entries(counts).forEach(([img, count]) => {
-            if (count >= 3) {
+            // Verifica que haya al menos 3 coincidencias y que el pago para 3 sea mayor que 0
+            if (count >= 3 && payouts[img][3] > 0) {
                 matchCount = Math.max(matchCount, count);
                 matchImg = img;
             }
@@ -617,6 +618,7 @@ function checkForMatches() {
 
     return totalWinnings;
 }
+
 
 // Función para resaltar y agrandar las coincidencias
 function highlightMatches(row, matchImg, matchCount) {
