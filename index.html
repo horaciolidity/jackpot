@@ -509,28 +509,18 @@ function spinReel(reel, numSpins) {
 
 // Función para iniciar el giro de todas las columnas
 function startSpinning() {
-    try {
-        shuffleImages(); // Barajar las imágenes antes de girar
-        let spinPromises = [];
-        reels.forEach((reel) => {
-            const spinsForThisReel = numSpins + Math.floor(Math.random() * 10); // Añadir variación aleatoria a cada columna
-            spinPromises.push(spinReel(reel, spinsForThisReel));
-        });
+    shuffleImages(); // Barajar las imágenes antes de girar
+    let spinPromises = [];
+    reels.forEach((reel) => {
+        const spinsForThisReel = numSpins + Math.floor(Math.random() * 10); // Añadir variación aleatoria a cada columna
+        spinPromises.push(spinReel(reel, spinsForThisReel));
+    });
 
-        Promise.all(spinPromises).then(() => {
-            try {
-                const winnings = checkForMatches();
-                updateDisplay(winnings);
-                console.log('All reels have stopped spinning.');
-            } catch (error) {
-                console.error('Error checking for matches:', error);
-            }
-        }).catch(error => {
-            console.error('Error spinning reels:', error);
-        });
-    } catch (error) {
-        console.error('Error starting spin:', error);
-    }
+    Promise.all(spinPromises).then(() => {
+        const winnings = checkForMatches();
+        updateDisplay(winnings);
+        console.log('All reels have stopped spinning.');
+    });
 }
 
 function getReelImages(reel) {
@@ -543,7 +533,6 @@ function getLineImages() {
 
 function checkForMatches() {
     const lineImages = getLineImages();
-    const matchPositions = [];
     let totalWinnings = 0;
 
     for (let row = 0; row < 5; row++) {
@@ -563,28 +552,21 @@ function checkForMatches() {
         });
 
         if (matchCount >= 3) {
-            // Resaltar todas las imágenes coincidentes en esta línea
-            for (let idx = 0; idx < lineImages.length; idx++) {
-                const images = lineImages[idx];
-                if (images[row] === matchImg) {
-                    matchPositions.push({ reelIndex: idx, imgIndex: row });
-                }
-            }
-
-            // Calcular el pago
+            // Calcular el pago basado en la imagen y la cantidad de coincidencias
             const payout = payouts[matchImg] && payouts[matchImg][matchCount];
             if (payout) {
                 totalWinnings += payout;
             }
 
-            highlightWinningLine(matchImg, row);
+            // Resaltar todas las imágenes coincidentes en esta línea
+            highlightWinningLine(row, matchImg, matchCount);
         }
     }
 
     return totalWinnings;
 }
 
-function highlightWinningLine(matchImg, row) {
+function highlightWinningLine(row, matchImg, matchCount) {
     // Primero, eliminar todas las clases de resaltado
     reels.forEach(reel => {
         Array.from(reel.querySelectorAll('img')).forEach(img => {
@@ -593,14 +575,14 @@ function highlightWinningLine(matchImg, row) {
     });
 
     // Aplicar la clase de resaltado a todas las imágenes coincidentes en la línea
-    reels.forEach((reel, idx) => {
+    reels.forEach((reel) => {
         const img = reel.children[row];
         if (img.src === matchImg) {
-            if (row >= 5) { // Asumiendo que row > 5 no es una línea ganadora
+            if (matchCount === 5) {
                 img.classList.add('highlight-five', 'flash-twice');
-            } else if (row === 4) {
+            } else if (matchCount === 4) {
                 img.classList.add('highlight-four', 'flash-twice');
-            } else if (row === 3) {
+            } else if (matchCount === 3) {
                 img.classList.add('highlight-three', 'flash-twice');
             } else {
                 img.classList.add('highlight');
