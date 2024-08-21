@@ -474,8 +474,7 @@ const betDisplay = document.querySelector('.bet');
 const winningsDisplay = document.querySelector('.winnings');
 
 let credit = 10; // Crédito inicial
-let bet = 2; // Apuesta por giro
-let freeSpins = 5; // Giros gratis iniciales
+const bet = 2; // Apuesta por giro
 
 const spinSpeed = 100; // Velocidad de cambio entre imágenes
 const numSpins = 20; // Número de veces que cada columna "gira"
@@ -524,18 +523,14 @@ function spinReel(reel, numSpins) {
 
 // Función para iniciar el giro de todas las columnas
 function startSpinning() {
-    if (credit < bet && freeSpins <= 0) {
+    if (credit < bet) {
         alert("No tienes suficiente crédito para continuar.");
         return;
     }
 
-    if (freeSpins > 0) {
-        freeSpins--;
-    } else {
-        credit -= bet; // Descuenta la apuesta del crédito total
-    }
+    credit -= bet; // Descontar la apuesta del crédito
 
-    updateDisplay(0); // Actualiza la pantalla con el crédito actual
+    updateDisplay(0); // Mostrar el crédito actualizado
 
     // Barajar las imágenes de cada columna de manera diferente
     reels.forEach(reel => {
@@ -551,8 +546,8 @@ function startSpinning() {
 
     Promise.all(spinPromises).then(() => {
         const winnings = checkForMatches();
-        credit += winnings; // Agrega las ganancias al crédito
-        updateDisplay(winnings); // Actualiza la pantalla con las ganancias
+        credit += winnings;
+        updateDisplay(winnings);
     });
 }
 
