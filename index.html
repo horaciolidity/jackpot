@@ -492,6 +492,14 @@ const payouts = {
     'https://jackpot-peach.vercel.app/img8.png': { 3: 45, 4: 90, 5: 180 },
 };
 
+// Función para barajar imágenes de manera aleatoria
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
 // Función para girar una columna
 function spinReel(reel, numSpins) {
     return new Promise(resolve => {
@@ -529,6 +537,13 @@ function startSpinning() {
 
     updateDisplay(0);
 
+    // Barajar las imágenes de cada columna de manera diferente
+    reels.forEach(reel => {
+        const images = Array.from(reel.querySelectorAll('img'));
+        shuffle(images);
+        images.forEach(img => reel.appendChild(img));
+    });
+
     const spinPromises = Array.from(reels).map((reel) => {
         const spinsForThisReel = numSpins + Math.floor(Math.random() * 10);
         return spinReel(reel, spinsForThisReel);
@@ -556,7 +571,7 @@ function checkForMatches() {
     const lineImages = getLineImages();
     let totalWinnings = 0;
 
-    for (let row = 0; row < 5; row++) {
+    for (let row = 0; row < 3; row++) {
         const rowImages = lineImages.map(images => images[row]);
         const counts = {};
         rowImages.forEach(img => {
@@ -601,7 +616,6 @@ function updateDisplay(winnings) {
 
 // Event listener para el botón de giro
 spinButton.addEventListener('click', startSpinning);
-
 
   </script>
 </html>
