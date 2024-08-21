@@ -408,7 +408,7 @@ button:active {
   background-color: red; /* Color de la línea */
   z-index: 2; /* Asegúrate de que las líneas se dibujen sobre el contenido */
   top: 60%; /* Coloca la línea en el medio del contenedor */
-  transform: translateY(-50%); /* Ajusta la línea para que pase por el medio del contenedor */
+  transform: translateY(calc(-50% + 1px)); /* Ajusta la línea hacia abajo 1px desde el medio */
 }
 
 
