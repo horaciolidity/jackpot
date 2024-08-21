@@ -524,11 +524,13 @@ function spinReel(reel, numSpins) {
 
 // Función para iniciar el giro de todas las columnas
 function startSpinning() {
+    // Verifica si hay suficiente crédito o giros gratuitos disponibles
     if (credit < bet && freeSpins <= 0) {
         alert("No tienes suficiente crédito para continuar.");
         return;
     }
 
+    // Deduce el crédito o utiliza un giro gratuito
     if (freeSpins > 0) {
         freeSpins--;
     } else {
@@ -622,6 +624,7 @@ function updateDisplay(winnings) {
 
 // Event listener para el botón de giro
 spinButton.addEventListener('click', startSpinning);
+
 
   </script>
 </html>
