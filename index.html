@@ -358,6 +358,14 @@
   }
 }
 
+    .total-winnings {
+  color: #ffd700;
+  font-weight: bold;
+  font-size: 18px;
+  margin: 5px 0;
+}
+
+
 
   </style>
 </head>
@@ -444,6 +452,8 @@
           <div class="balance-bet">
             <span class="credit">Credit: $100</span>
             <span class="bet">Bet: $1</span>
+            <span class="total-winnings">Total Winnings: $0</span>
+
           </div>
         </div>
         <div class="right-controls">
@@ -459,8 +469,22 @@
   <script>
 const reels = document.querySelectorAll('.reel');
 const spinButton = document.querySelector('.spin');
-const spinSpeed = 100; // Velocidad de cambio entre imágenes
-const numSpins = 20; // Número de veces que cada columna "gira"
+const spinSpeed = 100;
+const numSpins = 20;
+const betAmount = 1; // Valor del bet
+let totalWinnings = 0;
+
+// Pagos por coincidencias
+const payouts = {
+  'https://jackpot-peach.vercel.app/img1.png': {3: 30, 4: 50, 5: 100},
+  'https://jackpot-peach.vercel.app/img2.png': {3: 1, 4: 3, 5: 7},
+  'https://jackpot-peach.vercel.app/img3.png': {3: 2, 4: 5, 5: 8},
+  'https://jackpot-peach.vercel.app/img4.png': {3: 10, 4: 20, 5: 30},
+  'https://jackpot-peach.vercel.app/img5.png': {3: 3, 4: 7, 5: 12},
+  'https://jackpot-peach.vercel.app/img6.png': {3: 15, 4: 25, 5: 35},
+  'https://jackpot-peach.vercel.app/img7.png': {3: 20, 4: 30, 5: 50},
+  'https://jackpot-peach.vercel.app/img8.png': {3: 5, 4: 10, 5: 15}
+};
 
 // Función para girar una columna
 function spinReel(reel, numSpins) {
@@ -468,7 +492,6 @@ function spinReel(reel, numSpins) {
         let currentSpin = 0;
 
         function spin() {
-            // Mover la última imagen al inicio del contenedor
             const lastChild = reel.lastElementChild;
             reel.insertBefore(lastChild, reel.firstElementChild);
 
@@ -487,16 +510,17 @@ function spinReel(reel, numSpins) {
 
 // Función para iniciar el giro de todas las columnas
 function startSpinning() {
-    shuffleImages(); // Barajar las imágenes antes de girar
+    shuffleImages();
     let spinPromises = [];
     reels.forEach((reel) => {
-        const spinsForThisReel = numSpins + Math.floor(Math.random() * 10); // Añadir variación aleatoria a cada columna
+        const spinsForThisReel = numSpins + Math.floor(Math.random() * 10);
         spinPromises.push(spinReel(reel, spinsForThisReel));
     });
 
     Promise.all(spinPromises).then(() => {
-        checkForMatches();
+        const winnings = checkForMatches();
         console.log('All reels have stopped spinning.');
+        updateTotalWinnings(winnings);
     });
 }
 
@@ -510,7 +534,7 @@ function getLineImages() {
 
 function checkForMatches() {
     const lineImages = getLineImages();
-    const matchPositions = [];
+    let totalWinnings = 0;
 
     for (let row = 0; row < 5; row++) {
         const rowImages = lineImages.map(images => images[row]);
@@ -519,36 +543,25 @@ function checkForMatches() {
             counts[img] = (counts[img] || 0) + 1;
         });
 
-        let matchCount = 0;
-        let matchImg = null;
         Object.entries(counts).forEach(([img, count]) => {
             if (count >= 3) {
-                matchCount = Math.max(matchCount, count);
-                matchImg = img;
+                const payout = payouts[img][count] || 0;
+                totalWinnings += payout;
+                highlightWinningLine([{ reelIndex: lineImages.findIndex(images => images[row] === img), imgIndex: row }], count);
             }
         });
-
-        if (matchCount >= 3) {
-            lineImages.forEach((images, idx) => {
-                const img = images[row];
-                if (img === matchImg) {
-                    matchPositions.push({ reelIndex: idx, imgIndex: row });
-                }
-            });
-            highlightWinningLine(matchPositions, matchCount);
-        }
     }
+
+    return totalWinnings;
 }
 
 function highlightWinningLine(positions, count) {
-    // Primero, eliminar todas las clases de resaltado
     reels.forEach(reel => {
         Array.from(reel.querySelectorAll('img')).forEach(img => {
             img.classList.remove('highlight', 'highlight-five', 'highlight-four', 'highlight-three', 'flash-twice');
         });
     });
 
-    // Aplicar la clase de resaltado a las imágenes coincidentes
     positions.forEach(pos => {
         const reel = reels[pos.reelIndex];
         const img = reel.children[pos.imgIndex];
@@ -564,14 +577,13 @@ function highlightWinningLine(positions, count) {
         }
     });
 
-    // Eliminar el resaltado después de 2 segundos
     setTimeout(() => {
         reels.forEach(reel => {
             Array.from(reel.querySelectorAll('img')).forEach(img => {
                 img.classList.remove('highlight', 'highlight-five', 'highlight-four', 'highlight-three', 'flash-twice');
             });
         });
-    }, 2000); // Elimina el resaltado después de 2 segundos
+    }, 2000);
 }
 
 function shuffleImages() {
@@ -587,14 +599,19 @@ function shuffleImages() {
     ];
 
     reels.forEach((reel) => {
-        const images = Array.from(allImages); // Clonar la lista de imágenes
-        const shuffledImages = images.sort(() => Math.random() - 0.5); // Barajar la lista
-        const imagesInColumn = shuffledImages.slice(0, images.length); // Obtener una permutación única para esta columna
+        const images = Array.from(allImages);
+        const shuffledImages = images.sort(() => Math.random() - 0.5);
+        const imagesInColumn = shuffledImages.slice(0, images.length);
         const imgElements = reel.querySelectorAll('img');
         imgElements.forEach((img, idx) => {
-            img.src = imagesInColumn[idx % imagesInColumn.length]; // Asignar la imagen barajada
+            img.src = imagesInColumn[idx % imagesInColumn.length];
         });
     });
+}
+
+function updateTotalWinnings(winnings) {
+    totalWinnings += winnings;
+    document.querySelector('.total-winnings').textContent = `Total Winnings: $${totalWinnings}`;
 }
 
 spinButton.addEventListener('click', () => {
