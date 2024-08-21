@@ -509,18 +509,28 @@ function spinReel(reel, numSpins) {
 
 // Función para iniciar el giro de todas las columnas
 function startSpinning() {
-    shuffleImages(); // Barajar las imágenes antes de girar
-    let spinPromises = [];
-    reels.forEach((reel) => {
-        const spinsForThisReel = numSpins + Math.floor(Math.random() * 10); // Añadir variación aleatoria a cada columna
-        spinPromises.push(spinReel(reel, spinsForThisReel));
-    });
+    try {
+        shuffleImages(); // Barajar las imágenes antes de girar
+        let spinPromises = [];
+        reels.forEach((reel) => {
+            const spinsForThisReel = numSpins + Math.floor(Math.random() * 10); // Añadir variación aleatoria a cada columna
+            spinPromises.push(spinReel(reel, spinsForThisReel));
+        });
 
-    Promise.all(spinPromises).then(() => {
-        const winnings = checkForMatches();
-        updateDisplay(winnings);
-        console.log('All reels have stopped spinning.');
-    });
+        Promise.all(spinPromises).then(() => {
+            try {
+                const winnings = checkForMatches();
+                updateDisplay(winnings);
+                console.log('All reels have stopped spinning.');
+            } catch (error) {
+                console.error('Error checking for matches:', error);
+            }
+        }).catch(error => {
+            console.error('Error spinning reels:', error);
+        });
+    } catch (error) {
+        console.error('Error starting spin:', error);
+    }
 }
 
 function getReelImages(reel) {
@@ -533,6 +543,7 @@ function getLineImages() {
 
 function checkForMatches() {
     const lineImages = getLineImages();
+    const matchPositions = [];
     let totalWinnings = 0;
 
     for (let row = 0; row < 5; row++) {
@@ -552,21 +563,30 @@ function checkForMatches() {
         });
 
         if (matchCount >= 3) {
-            // Calcular el pago basado en la imagen y la cantidad de coincidencias
+            const currentMatchPositions = [];
+            lineImages.forEach((images, idx) => {
+                const img = images[row];
+                if (img === matchImg) {
+                    currentMatchPositions.push({ reelIndex: idx, imgIndex: row });
+                }
+            });
+
+            matchPositions.push(...currentMatchPositions);
+
+            // Calcular el pago
             const payout = payouts[matchImg] && payouts[matchImg][matchCount];
             if (payout) {
                 totalWinnings += payout;
             }
 
-            // Resaltar todas las imágenes coincidentes en esta línea
-            highlightWinningLine(row, matchImg, matchCount);
+            highlightWinningLine(currentMatchPositions, matchCount);
         }
     }
 
     return totalWinnings;
 }
 
-function highlightWinningLine(row, matchImg, matchCount) {
+function highlightWinningLine(positions, count) {
     // Primero, eliminar todas las clases de resaltado
     reels.forEach(reel => {
         Array.from(reel.querySelectorAll('img')).forEach(img => {
@@ -574,19 +594,19 @@ function highlightWinningLine(row, matchImg, matchCount) {
         });
     });
 
-    // Aplicar la clase de resaltado a todas las imágenes coincidentes en la línea
-    reels.forEach((reel) => {
-        const img = reel.children[row];
-        if (img.src === matchImg) {
-            if (matchCount === 5) {
-                img.classList.add('highlight-five', 'flash-twice');
-            } else if (matchCount === 4) {
-                img.classList.add('highlight-four', 'flash-twice');
-            } else if (matchCount === 3) {
-                img.classList.add('highlight-three', 'flash-twice');
-            } else {
-                img.classList.add('highlight');
-            }
+    // Aplicar la clase de resaltado a las imágenes coincidentes
+    positions.forEach(pos => {
+        const reel = reels[pos.reelIndex];
+        const img = reel.children[pos.imgIndex];
+
+        if (count === 5) {
+            img.classList.add('highlight-five', 'flash-twice');
+        } else if (count === 4) {
+            img.classList.add('highlight-four', 'flash-twice');
+        } else if (count === 3) {
+            img.classList.add('highlight-three', 'flash-twice');
+        } else {
+            img.classList.add('highlight');
         }
     });
 
