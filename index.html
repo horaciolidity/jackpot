@@ -4,6 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
   <title>Wolf Gold Slot Machine</title>
   <style>
     body {
@@ -505,7 +507,10 @@ button:active {
           </div>
         </div>
         <div class="right-controls">
-          <button class="sound">🔊<i class="fas fa-volume-up"></i></button>
+<button class="sound">🔊<i class="fas fa-volume-up"></i></button>
+
+  <audio id="reggaeton-radio" src="http://streaming.radionomy.com/Reggaeton-Radio" preload="auto"></audio>   
+          
           <button class="info">ℹ️<i class="fas fa-info-circle"></i></button>
         </div>
       </div>
@@ -522,10 +527,14 @@ const betDisplay = document.querySelector('.bet');
 const winningsDisplay = document.querySelector('.winnings');
 const increaseBetButton = document.querySelector('.increase-bet');
 const decreaseBetButton = document.querySelector('.decrease-bet');
+const soundButton = document.querySelector('.sound');
+const audio = document.getElementById('reggaeton-radio');
 
 let credit = 10; // Crédito inicial
 let bet = 2; // Apuesta por giro
 let activeLines = 1; // Líneas activas (1 para la línea 3)
+let isPlaying = false;
+
 
 const spinSpeed = 100; // Velocidad de cambio entre imágenes
 const numSpins = 20; // Número de veces que cada columna "gira"
@@ -558,6 +567,18 @@ function drawActiveLines() {
     }
 }
 
+ soundButton.addEventListener('click', () => {
+      if (isPlaying) {
+        audio.pause();
+        soundButton.innerHTML = '🔊<i class="fas fa-volume-up"></i>';
+      } else {
+        audio.play();
+        soundButton.innerHTML = '🔇<i class="fas fa-volume-mute"></i>';
+      }
+      isPlaying = !isPlaying;
+    });
+
+    
 // Función para actualizar la cantidad de líneas activas y la apuesta
 function updateBet() {
     switch (activeLines) {
