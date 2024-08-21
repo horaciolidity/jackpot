@@ -391,6 +391,13 @@ button:active {
   margin: 5px 0;
 }
 
+/* Estilo para resaltar las líneas activas */
+.active-line {
+    border-top: 2px solid red; /* Línea superior de la imagen */
+    border-bottom: 2px solid red; /* Línea inferior de la imagen */
+    margin: 2px 0; /* Espacio para la línea */
+    box-sizing: border-box; /* Incluir el borde en el tamaño del cuadro */
+}
 
 
   </style>
@@ -495,12 +502,15 @@ button:active {
   <script>
 const reels = document.querySelectorAll('.reel');
 const spinButton = document.querySelector('.spin');
+const increaseBetButton = document.querySelector('.increase-bet');
+const decreaseBetButton = document.querySelector('.decrease-bet');
 const creditDisplay = document.querySelector('.credit');
 const betDisplay = document.querySelector('.bet');
 const winningsDisplay = document.querySelector('.winnings');
 
 let credit = 10; // Crédito inicial
-const bet = 2; // Apuesta por giro
+let bet = 2; // Apuesta por giro inicial
+let activeLines = 1; // Número de líneas activas
 
 const spinSpeed = 100; // Velocidad de cambio entre imágenes
 const numSpins = 20; // Número de veces que cada columna "gira"
@@ -516,7 +526,6 @@ const payouts = {
     'https://jackpot-peach.vercel.app/img7.png': { 3: 0, 4: 10, 5: 28 },
     'https://jackpot-peach.vercel.app/img8.png': { 3: 1, 4: 3, 5: 7 },
 };
-
 
 // Función para barajar imágenes de manera aleatoria
 function shuffle(array) {
@@ -556,7 +565,6 @@ function startSpinning() {
     }
 
     credit -= bet; // Descontar la apuesta del crédito
-
     updateDisplay(0); // Mostrar el crédito actualizado
 
     // Barajar las imágenes de cada columna de manera diferente
@@ -593,7 +601,8 @@ function checkForMatches() {
     const lineImages = getLineImages();
     let totalWinnings = 0;
 
-    for (let row = 0; row < 5; row++) {
+    // Iterar solo sobre las líneas activas
+    for (let row = 3 - Math.floor(activeLines / 2); row < 3 + Math.ceil(activeLines / 2); row++) {
         const rowImages = lineImages.map(images => images[row]);
         const counts = {};
         rowImages.forEach(img => {
@@ -619,7 +628,6 @@ function checkForMatches() {
     return totalWinnings;
 }
 
-
 // Función para resaltar y agrandar las coincidencias
 function highlightMatches(row, matchImg, matchCount) {
     reels.forEach((reel, idx) => {
@@ -627,7 +635,6 @@ function highlightMatches(row, matchImg, matchCount) {
         if (img.src === matchImg) {
             const highlightClass = `highlight-${matchCount}`;
             img.classList.add(highlightClass);
-            // Añadir la clase de animación para el agrandamiento
             img.classList.add('flash-twice');
             setTimeout(() => {
                 img.classList.remove(highlightClass);
@@ -637,12 +644,48 @@ function highlightMatches(row, matchImg, matchCount) {
     });
 }
 
+// Función para resaltar las líneas activas
+function highlightActiveLines() {
+    reels.forEach(reel => {
+        Array.from(reel.querySelectorAll('img')).forEach((img, index) => {
+            img.classList.remove('active-line');
+            if (index >= 3 - Math.floor(activeLines / 2) && index < 3 + Math.ceil(activeLines / 2)) {
+                img.classList.add('active-line');
+            }
+        });
+    });
+}
+
 // Función para actualizar la pantalla
 function updateDisplay(winnings) {
     creditDisplay.textContent = `Credit: $${credit}`;
     betDisplay.textContent = `Bet: $${bet}`;
     winningsDisplay.textContent = `Ganancias: $${winnings}`;
 }
+
+// Función para incrementar la apuesta
+function increaseBet() {
+    if (activeLines < 5) {
+        activeLines += 2;
+        bet = activeLines * 2;
+        highlightActiveLines();
+        updateDisplay(0); // Actualizar la pantalla con el nuevo valor de apuesta
+    }
+}
+
+// Función para disminuir la apuesta
+function decreaseBet() {
+    if (activeLines > 1) {
+        activeLines -= 2;
+        bet = activeLines * 2;
+        highlightActiveLines();
+        updateDisplay(0); // Actualizar la pantalla con el nuevo valor de apuesta
+    }
+}
+
+// Event listeners para los botones de incremento y decremento de apuesta
+increaseBetButton.addEventListener('click', increaseBet);
+decreaseBetButton.addEventListener('click', decreaseBet);
 
 // Event listener para el botón de giro
 spinButton.addEventListener('click', startSpinning);
