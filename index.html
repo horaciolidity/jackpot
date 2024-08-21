@@ -398,6 +398,14 @@ button:active {
     margin: 2px 0; /* Espacio para la línea */
     box-sizing: border-box; /* Incluir el borde en el tamaño del cuadro */
 }
+.lines-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Asegura que las líneas no interfieran con los clics */
+}
 
 
   </style>
@@ -424,6 +432,8 @@ button:active {
     </header>
     <div class="slot-machine">
       <div class="reels">
+        <div class="lines-container"></div>
+
         <div class="reel">
           <img src="https://jackpot-peach.vercel.app/img1.png" class="reel-symbol" alt="Symbol 1">
           <img src="https://jackpot-peach.vercel.app/img2.png" class="reel-symbol" alt="Symbol 2">
@@ -719,6 +729,7 @@ spinButton.addEventListener('click', startSpinning);
 // Iniciar con las líneas y apuesta predeterminadas
 drawActiveLines();
 updateBet();
+
 
   </script>
 </html>
