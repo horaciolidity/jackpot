@@ -154,113 +154,139 @@
 }
 
 
-    footer {
-      background-color: transparent;
-      padding: 10px;
-      position: relative;
-      z-index: 10;
-    }
+  footer {
+  background-color: transparent;
+  padding: 10px;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+}
 
-    .controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 10px;
-      height: 80px;
-      position: relative;
-      top: -30px;
-    }
+   .controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
+  height: 100px;
+  width: 90%; /* Ancho para que ocupe la mayoría del espacio */
+}
+  .left-controls, .right-controls {
+  display: flex;
+  align-items: center;
+}
 
-    .left-controls,
-    .right-controls {
-      display: flex;
-      align-items: center;
-    }
+.center-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-grow: 1;
+  margin: 0 20px;
+}
 
-    .center-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-grow: 1;
-      margin: 0 20px;
-    }
+  button {
+  background-color: #333;
+  border: none;
+  border-radius: 50%;
+  padding: 15px;
+  margin: 0 5px;
+  cursor: pointer;
+  color: #ffffff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  box-shadow: 0 4px #666;
+}
 
-    button {
-      background-color: transparent;
-      border: 2px solid #ffffff;
-      border-radius: 50%;
-      padding: 10px;
-      margin: 0 5px;
-      cursor: pointer;
-      color: #ffffff;
-      transition: background-color 0.3s, transform 0.1s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-    }
+button:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(255, 255, 255, 0.5);
+}
 
-    button:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
+button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 2px #444;
+}
 
-    button:active {
-      transform: scale(0.95);
-    }
+   .settings, .sound, .info {
+  font-size: 24px;
+  width: 50px;
+  height: 50px;
+}
 
-    .settings,
-    .info,
-    .sound {
-      font-size: 16px;
-      width: 40px;
-      height: 40px;
-    }
+.spin-controls {
+  display: flex;
+  align-items: center;
+}
 
-    .spin-controls {
-      display: flex;
-      align-items: center;
-    }
+.decrease-bet, .increase-bet {
+  font-size: 24px;
+  width: 50px;
+  height: 50px;
+}
+.spin {
+  width: 120px;
+  height: 120px;
+  font-size: 24px;
+  text-transform: uppercase;
+  margin: 0 15px;
+  background: linear-gradient(45deg, #ff0000, #cc0000);
+  border-radius: 50%;
+  box-shadow: 0 6px #990000;
+}
 
-    .decrease-bet,
-    .increase-bet {
-      font-size: 24px;
-      width: 40px;
-      height: 40px;
-    }
+.spin:hover {
+  background: linear-gradient(45deg, #ff4d4d, #e60000);
+  transform: scale(1.1);
+}
 
-    .spin {
-      width: 100px;
-      height: 100px;
-      font-size: 20px;
-      text-transform: uppercase;
-      margin: 0 15px;
-    }
+.spin:active {
+  background: linear-gradient(45deg, #cc0000, #990000);
+  transform: scale(1.05);
+  box-shadow: 0 2px #660000;
+}
 
-    .spin:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
+.spin::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 10px;
+  background: #333;
+  border-radius: 5px;
+  transform: translate(-50%, -50%) rotate(0deg);
+  transition: transform 0.3s ease;
+  z-index: -1;
+}
 
-    .spin:active {
-      transform: scale(0.95);
-    }
+.spin:active::before {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
 
-    .turbo-spin,
-    .autoplay {
-      padding: 10px 15px;
-      border-radius: 25px;
-      font-size: 16px;
-    }
+ .turbo-spin, .autoplay {
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 16px;
+  background: #666;
+  box-shadow: 0 4px #444;
+}
 
-    .credit,
-    .bet {
-      color: #fff;
-      font-weight: bold;
-      font-size: 16px;
-      margin: 5px 0;
-    }
-
+.turbo-spin:hover, .autoplay:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(255, 255, 255, 0.5);
+}
+   .credit, .bet {
+  color: #ffd700;
+  font-weight: bold;
+  font-size: 18px;
+  margin: 5px 0;
+}
     .balance-bet {
       display: flex;
       flex-direction: column;
@@ -358,7 +384,7 @@
   }
 }
 
-    .winnings {
+ .winnings {
   color: #ffd700;
   font-weight: bold;
   font-size: 18px;
