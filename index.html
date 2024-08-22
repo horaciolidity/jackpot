@@ -510,7 +510,7 @@ button:active {
 
 
 </body>
-  <script>
+<script>
 const reels = document.querySelectorAll('.reel');
 const spinButton = document.querySelector('.spin');
 const creditDisplay = document.querySelector('.credit');
@@ -659,80 +659,53 @@ function getLineImages() {
     return Array.from(reels).map(reel => getReelImages(reel));
 }
 
-// Función para verificar coincidencias y calcular ganancias
+// Función para comprobar coincidencias
 function checkForMatches() {
     const lineImages = getLineImages();
     let totalWinnings = 0;
 
-    for (let row = 0; row < 5; row++) {
-        const rowImages = lineImages.map(images => images[row]);
-        const counts = {};
-        rowImages.forEach(img => {
-            counts[img] = (counts[img] || 0) + 1;
-        });
+    for (let i = 0; i < 5; i++) {
+        const symbols = lineImages.map(images => images[i]);
+        const uniqueSymbols = [...new Set(symbols)];
 
-        let matchCount = 0;
-        let matchImg = null;
-        Object.entries(counts).forEach(([img, count]) => {
-            // Verifica que haya al menos 3 coincidencias y que el pago para 3 sea mayor que 0
-            if (count >= 3 && payouts[img][3] > 0) {
-                matchCount = Math.max(matchCount, count);
-                matchImg = img;
+        if (uniqueSymbols.length === 1) {
+            const symbol = uniqueSymbols[0];
+            const count = symbols.length;
+            const payout = payouts[symbol] ? payouts[symbol][count] : 0;
+
+            if (payout > 0) {
+                // Resaltar coincidencias
+                highlightMatch(i, symbol);
+                totalWinnings += payout;
             }
-        });
-
-        // Solo cuenta si la coincidencia está en una línea activa
-        if (matchCount >= 3 && isLineActive(row + 1)) {
-            highlightMatches(row, matchImg, matchCount);
-            totalWinnings += payouts[matchImg][matchCount] || 0;
         }
     }
 
     return totalWinnings;
 }
 
-// Verifica si una línea está activa
-function isLineActive(lineNumber) {
-    const activeLinesRange = {
-        1: [3],
-        3: [2, 3, 4],
-        5: [1, 2, 3, 4, 5]
-    };
-
-    return activeLinesRange[activeLines].includes(lineNumber);
-}
-
-// Función para resaltar y agrandar las coincidencias
-function highlightMatches(row, matchImg, matchCount) {
-    reels.forEach((reel, idx) => {
-        const img = reel.querySelectorAll('img')[row];
-        if (img.src === matchImg) {
-            const highlightClass = highlight-${matchCount};
-            img.classList.add(highlightClass);
-            // Añadir la clase de animación para el agrandamiento
-            img.classList.add('flash-twice');
-            setTimeout(() => {
-                img.classList.remove(highlightClass);
-                img.classList.remove('flash-twice');
-            }, 2000);
+// Función para resaltar las coincidencias en la línea
+function highlightMatch(lineIndex, symbol) {
+    reels.forEach((reel, reelIndex) => {
+        const images = Array.from(reel.querySelectorAll('img'));
+        const img = images.find(img => img.src === symbol);
+        if (img) {
+            img.classList.add(`highlight-${activeLines}`);
         }
     });
 }
 
 // Función para actualizar la pantalla
 function updateDisplay(winnings) {
-    creditDisplay.textContent = Credit: $${credit};
-    betDisplay.textContent = Bet: $${bet};
-    winningsDisplay.textContent = Ganancias: $${winnings};
+    creditDisplay.textContent = `Credit: $${credit}`;
+    betDisplay.textContent = `Bet: $${bet}`;
+    winningsDisplay.textContent = `Ganancias: $${winnings}`;
 }
 
-// Event listener para el botón de giro
+// Añadir evento al botón de girar
 spinButton.addEventListener('click', startSpinning);
 
-// Iniciar con las líneas y apuesta predeterminadas
-drawActiveLines();
-updateBet();
+updateBet(); // Inicializar la apuesta y líneas activas
+</script>
 
-
-  </script>
 </html>
