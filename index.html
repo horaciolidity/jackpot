@@ -1,11 +1,9 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
   <title>Wolf Gold Slot Machine</title>
   <style>
     body {
@@ -409,11 +407,7 @@ button:active {
   height: 2px; /* Grosor de la línea */
   background-color: red; /* Color de la línea */
   z-index: 2; /* Asegúrate de que las líneas se dibujen sobre el contenido */
-  top: 60%; /* Coloca la línea en el medio del contenedor */
-  transform: translateY(calc(-50% + 1px)); /* Ajusta la línea hacia abajo 1px desde el medio */
 }
-
-
 
   </style>
 </head>
@@ -491,13 +485,13 @@ button:active {
     <footer>
       <div class="controls">
         <div class="left-controls">
-          <button class="settings"><i class="fas fa-cog"></i></button>
+          <button class="settings">⚙️<i class="fas fa-cog"></i></button>
         </div>
         <div class="center-controls">
           <div class="spin-controls">
-            <button class="decrease-bet"><i class="fas fa-minus"></i></button>
+            <button class="decrease-bet">-<i class="fas fa-minus"></i></button>
             <button class="spin">Spin</button>
-            <button class="increase-bet"><i class="fas fa-plus"></i></button>
+            <button class="increase-bet">+<i class="fas fa-plus"></i></button>
           </div>
           <div class="balance-bet">
             <span class="credit">Credit: $10 free</span>
@@ -506,15 +500,9 @@ button:active {
 
           </div>
         </div>
-       <div class="right-controls">
-  <button class="sound" onclick="toggleAudio()">
-    <i class="fas fa-volume-up"></i>
-  </button>
-
-  <!-- Cambia la ruta del archivo MP3 a la correcta en tu proyecto -->
-  <audio id="reggaeton-radio" src="https://jackpot-peach.vercel.app/CumbiaMix5%20-%20Danny%20y%20NiQ.mp3" preload="auto"></audio>
-
-          <button class="info"><i class="fas fa-info-circle"></i></button>
+        <div class="right-controls">
+          <button class="sound">🔊<i class="fas fa-volume-up"></i></button>
+          <button class="info">ℹ️<i class="fas fa-info-circle"></i></button>
         </div>
       </div>
     </footer>
