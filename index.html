@@ -538,18 +538,20 @@ const payouts = {
     'https://jackpot-peach.vercel.app/img8.png': { 3: 1, 4: 3, 5: 7 },
 };
 
-// Función para dibujar las líneas activas
 function drawActiveLines() {
     // Limpiar las líneas existentes
     const linesContainer = document.querySelector('.lines-container');
     linesContainer.innerHTML = '';
+
+    // Ajuste según el número de líneas activas
+    const lineHeight = 100 / 5; // Altura en porcentaje para cada fila
 
     // Dibujar nuevas líneas
     for (let i = 0; i < activeLines; i++) {
         const lineIndex = 2 + i - Math.floor((activeLines - 1) / 2);
         const line = document.createElement('div');
         line.className = 'active-line';
-        line.style.top = ${20 * lineIndex}%; // Ajusta la posición según el tamaño del slot
+        line.style.top = `${lineIndex * lineHeight}%`; // Ajusta la posición según el tamaño del slot
         linesContainer.appendChild(line);
     }
 }
