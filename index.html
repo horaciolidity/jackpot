@@ -514,8 +514,8 @@ button:active {
 </body>
 <script>
 
+// Script para la máquina tragamonedas y control de audio
 
- 
 document.addEventListener('DOMContentLoaded', () => {
     // Variables de audio
     const audio = document.getElementById('background-audio');
@@ -532,201 +532,204 @@ document.addEventListener('DOMContentLoaded', () => {
         soundButton.innerHTML = isMuted ? '🔇<i class="fas fa-volume-mute"></i>' : '🔊<i class="fas fa-volume-up"></i>';
     });
 
-const reels = document.querySelectorAll('.reel');
-const spinButton = document.querySelector('.spin');
-const creditDisplay = document.querySelector('.credit');
-const betDisplay = document.querySelector('.bet');
-const winningsDisplay = document.querySelector('.winnings');
-const increaseBetButton = document.querySelector('.increase-bet');
-const decreaseBetButton = document.querySelector('.decrease-bet');
+    // Variables de la máquina tragamonedas
+    const reels = document.querySelectorAll('.reel');
+    const spinButton = document.querySelector('.spin');
+    const creditDisplay = document.querySelector('.credit');
+    const betDisplay = document.querySelector('.bet');
+    const winningsDisplay = document.querySelector('.winnings');
+    const increaseBetButton = document.querySelector('.increase-bet');
+    const decreaseBetButton = document.querySelector('.decrease-bet');
 
-let credit = 10; // Crédito inicial
-let bet = 2; // Apuesta por giro
-let activeLines = 1; // Líneas activas (1 para la línea 3)
+    let credit = 10; // Crédito inicial
+    let bet = 2; // Apuesta por giro
+    let activeLines = 1; // Líneas activas (1 para la línea 3)
 
-const spinSpeed = 100; // Velocidad de cambio entre imágenes
-const numSpins = 20; // Número de veces que cada columna "gira"
+    const spinSpeed = 100; // Velocidad de cambio entre imágenes
+    const numSpins = 20; // Número de veces que cada columna "gira"
 
-// Pagos para diferentes combinaciones
-const payouts = {
-    'https://jackpot-peach.vercel.app/img1.png': { 3: 0, 4: 20, 5: 75 },
-    'https://jackpot-peach.vercel.app/img2.png': { 3: 3, 4: 6, 5: 15 },
-    'https://jackpot-peach.vercel.app/img3.png': { 3: 4, 4: 8, 5: 20 },
-    'https://jackpot-peach.vercel.app/img4.png': { 3: 0, 4: 15, 5: 47 },
-    'https://jackpot-peach.vercel.app/img5.png': { 3: 2, 4: 4, 5: 10 },
-    'https://jackpot-peach.vercel.app/img6.png': { 3: 0, 4: 13, 5: 36 },
-    'https://jackpot-peach.vercel.app/img7.png': { 3: 0, 4: 10, 5: 28 },
-    'https://jackpot-peach.vercel.app/img8.png': { 3: 1, 4: 3, 5: 7 },
-};
+    // Pagos para diferentes combinaciones
+    const payouts = {
+        'https://jackpot-peach.vercel.app/img1.png': { 3: 0, 4: 20, 5: 75 },
+        'https://jackpot-peach.vercel.app/img2.png': { 3: 3, 4: 6, 5: 15 },
+        'https://jackpot-peach.vercel.app/img3.png': { 3: 4, 4: 8, 5: 20 },
+        'https://jackpot-peach.vercel.app/img4.png': { 3: 0, 4: 15, 5: 47 },
+        'https://jackpot-peach.vercel.app/img5.png': { 3: 2, 4: 4, 5: 10 },
+        'https://jackpot-peach.vercel.app/img6.png': { 3: 0, 4: 13, 5: 36 },
+        'https://jackpot-peach.vercel.app/img7.png': { 3: 0, 4: 10, 5: 28 },
+        'https://jackpot-peach.vercel.app/img8.png': { 3: 1, 4: 3, 5: 7 },
+    };
 
-function drawActiveLines() {
-    // Limpiar las líneas existentes
-    const linesContainer = document.querySelector('.lines-container');
-    linesContainer.innerHTML = '';
+    function drawActiveLines() {
+        // Limpiar las líneas existentes
+        const linesContainer = document.querySelector('.lines-container');
+        linesContainer.innerHTML = '';
 
-    // Ajuste según el número de líneas activas
-    const lineHeight = 100 / 5; // Altura en porcentaje para cada fila
+        // Ajuste según el número de líneas activas
+        const lineHeight = 100 / 5; // Altura en porcentaje para cada fila
 
-    // Dibujar nuevas líneas
-    for (let i = 0; i < activeLines; i++) {
-        const lineIndex = 2 + i - Math.floor((activeLines - 1) / 2);
-        const line = document.createElement('div');
-        line.className = 'active-line';
-        line.style.top = `${lineIndex * lineHeight}%`; // Ajusta la posición según el tamaño del slot
-        linesContainer.appendChild(line);
+        // Dibujar nuevas líneas
+        for (let i = 0; i < activeLines; i++) {
+            const lineIndex = 2 + i - Math.floor((activeLines - 1) / 2);
+            const line = document.createElement('div');
+            line.className = 'active-line';
+            line.style.top = `${lineIndex * lineHeight}%`; // Ajusta la posición según el tamaño del slot
+            linesContainer.appendChild(line);
+        }
     }
-}
 
-// Función para actualizar la cantidad de líneas activas y la apuesta
-function updateBet() {
-    switch (activeLines) {
-        case 1:
-            bet = 2;
-            break;
-        case 3:
-            bet = 6;
-            break;
-        case 5:
-            bet = 10;
-            break;
+    // Función para actualizar la cantidad de líneas activas y la apuesta
+    function updateBet() {
+        switch (activeLines) {
+            case 1:
+                bet = 2;
+                break;
+            case 3:
+                bet = 6;
+                break;
+            case 5:
+                bet = 10;
+                break;
+        }
+        updateDisplay(0); // Actualiza la pantalla sin ganancias
+        drawActiveLines(); // Redibujar las líneas activas
     }
-    updateDisplay(0); // Actualiza la pantalla sin ganancias
-    drawActiveLines(); // Redibujar las líneas activas
-}
 
-// Función para incrementar la apuesta
-increaseBetButton.addEventListener('click', () => {
-    if (activeLines < 5) {
-        activeLines += 2; // Incrementar de 1 a 3 y de 3 a 5 líneas
-        updateBet();
+    // Función para incrementar la apuesta
+    increaseBetButton.addEventListener('click', () => {
+        if (activeLines < 5) {
+            activeLines += 2; // Incrementar de 1 a 3 y de 3 a 5 líneas
+            updateBet();
+        }
+    });
+
+    // Función para disminuir la apuesta
+    decreaseBetButton.addEventListener('click', () => {
+        if (activeLines > 1) {
+            activeLines -= 2; // Decrementar de 5 a 3 y de 3 a 1 líneas
+            updateBet();
+        }
+    });
+
+    // Función para barajar imágenes de manera aleatoria
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
     }
-});
 
-// Función para disminuir la apuesta
-decreaseBetButton.addEventListener('click', () => {
-    if (activeLines > 1) {
-        activeLines -= 2; // Decrementar de 5 a 3 y de 3 a 1 líneas
-        updateBet();
+    // Función para girar una columna
+    function spinReel(reel, numSpins) {
+        return new Promise(resolve => {
+            let currentSpin = 0;
+
+            function spin() {
+                const lastChild = reel.lastElementChild;
+                reel.insertBefore(lastChild, reel.firstElementChild);
+
+                currentSpin++;
+
+                if (currentSpin < numSpins) {
+                    setTimeout(spin, spinSpeed);
+                } else {
+                    resolve();
+                }
+            }
+
+            spin();
+        });
     }
-});
 
-// Función para barajar imágenes de manera aleatoria
-function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+    // Función para iniciar el giro de todas las columnas
+    function startSpinning() {
+        if (credit < bet) {
+            alert("No tienes suficiente crédito para continuar.");
+            return;
+        }
+
+        credit -= bet; // Descontar la apuesta del crédito
+
+        updateDisplay(0); // Mostrar el crédito actualizado
+
+        // Barajar las imágenes de cada columna de manera diferente
+        reels.forEach(reel => {
+            const images = Array.from(reel.querySelectorAll('img'));
+            shuffle(images);
+            images.forEach(img => reel.appendChild(img));
+        });
+
+        const spinPromises = Array.from(reels).map((reel) => {
+            const spinsForThisReel = numSpins + Math.floor(Math.random() * 10);
+            return spinReel(reel, spinsForThisReel);
+        });
+
+        Promise.all(spinPromises).then(() => {
+            const winnings = checkForMatches();
+            credit += winnings;
+            updateDisplay(winnings);
+        });
     }
-}
 
-// Función para girar una columna
-function spinReel(reel, numSpins) {
-    return new Promise(resolve => {
-        let currentSpin = 0;
+    // Función para obtener las imágenes de cada carrete
+    function getReelImages(reel) {
+        return Array.from(reel.querySelectorAll('img')).map(img => img.src);
+    }
 
-        function spin() {
-            const lastChild = reel.lastElementChild;
-            reel.insertBefore(lastChild, reel.firstElementChild);
+    // Función para obtener las imágenes de cada fila
+    function getLineImages() {
+        return Array.from(reels).map(reel => getReelImages(reel));
+    }
 
-            currentSpin++;
+    // Función para comprobar coincidencias
+    function checkForMatches() {
+        const lineImages = getLineImages();
+        let totalWinnings = 0;
 
-            if (currentSpin < numSpins) {
-                setTimeout(spin, spinSpeed);
-            } else {
-                resolve();
+        for (let i = 0; i < 5; i++) {
+            const symbols = lineImages.map(images => images[i]);
+            const uniqueSymbols = [...new Set(symbols)];
+
+            if (uniqueSymbols.length === 1) {
+                const symbol = uniqueSymbols[0];
+                const count = symbols.length;
+                const payout = payouts[symbol] ? payouts[symbol][count] : 0;
+
+                if (payout > 0) {
+                    // Resaltar coincidencias
+                    highlightMatch(i, symbol);
+                    totalWinnings += payout;
+                }
             }
         }
 
-        spin();
-    });
-}
-
-// Función para iniciar el giro de todas las columnas
-function startSpinning() {
-    if (credit < bet) {
-        alert("No tienes suficiente crédito para continuar.");
-        return;
+        return totalWinnings;
     }
 
-    credit -= bet; // Descontar la apuesta del crédito
-
-    updateDisplay(0); // Mostrar el crédito actualizado
-
-    // Barajar las imágenes de cada columna de manera diferente
-    reels.forEach(reel => {
-        const images = Array.from(reel.querySelectorAll('img'));
-        shuffle(images);
-        images.forEach(img => reel.appendChild(img));
-    });
-
-    const spinPromises = Array.from(reels).map((reel) => {
-        const spinsForThisReel = numSpins + Math.floor(Math.random() * 10);
-        return spinReel(reel, spinsForThisReel);
-    });
-
-    Promise.all(spinPromises).then(() => {
-        const winnings = checkForMatches();
-        credit += winnings;
-        updateDisplay(winnings);
-    });
-}
-
-// Función para obtener las imágenes de cada carrete
-function getReelImages(reel) {
-    return Array.from(reel.querySelectorAll('img')).map(img => img.src);
-}
-
-// Función para obtener las imágenes de cada fila
-function getLineImages() {
-    return Array.from(reels).map(reel => getReelImages(reel));
-}
-
-// Función para comprobar coincidencias
-function checkForMatches() {
-    const lineImages = getLineImages();
-    let totalWinnings = 0;
-
-    for (let i = 0; i < 5; i++) {
-        const symbols = lineImages.map(images => images[i]);
-        const uniqueSymbols = [...new Set(symbols)];
-
-        if (uniqueSymbols.length === 1) {
-            const symbol = uniqueSymbols[0];
-            const count = symbols.length;
-            const payout = payouts[symbol] ? payouts[symbol][count] : 0;
-
-            if (payout > 0) {
-                // Resaltar coincidencias
-                highlightMatch(i, symbol);
-                totalWinnings += payout;
+    // Función para resaltar las coincidencias en la línea
+    function highlightMatch(lineIndex, symbol) {
+        reels.forEach((reel, reelIndex) => {
+            const images = Array.from(reel.querySelectorAll('img'));
+            const img = images.find(img => img.src === symbol);
+            if (img) {
+                img.classList.add(`highlight-${activeLines}`);
             }
-        }
+        });
     }
 
-    return totalWinnings;
-}
+    // Función para actualizar la pantalla
+    function updateDisplay(winnings) {
+        creditDisplay.textContent = `Credit: $${credit}`;
+        betDisplay.textContent = `Bet: $${bet}`;
+        winningsDisplay.textContent = `Ganancias: $${winnings}`;
+    }
 
-// Función para resaltar las coincidencias en la línea
-function highlightMatch(lineIndex, symbol) {
-    reels.forEach((reel, reelIndex) => {
-        const images = Array.from(reel.querySelectorAll('img'));
-        const img = images.find(img => img.src === symbol);
-        if (img) {
-            img.classList.add(`highlight-${activeLines}`);
-        }
-    });
-}
+    // Añadir evento al botón de girar
+    spinButton.addEventListener('click', startSpinning);
 
-// Función para actualizar la pantalla
-function updateDisplay(winnings) {
-    creditDisplay.textContent = `Credit: $${credit}`;
-    betDisplay.textContent = `Bet: $${bet}`;
-    winningsDisplay.textContent = `Ganancias: $${winnings}`;
-}
+    updateBet(); // Inicializar la apuesta y líneas activas
+});
 
-// Añadir evento al botón de girar
-spinButton.addEventListener('click', startSpinning);
-
-updateBet(); // Inicializar la apuesta y líneas activas
 </script>
 
 </html>
