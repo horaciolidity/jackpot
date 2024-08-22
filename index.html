@@ -530,39 +530,38 @@ const betDisplay = document.querySelector('.bet');
 const winningsDisplay = document.querySelector('.winnings');
 const increaseBetButton = document.querySelector('.increase-bet');
 const decreaseBetButton = document.querySelector('.decrease-bet');
-const soundButton = document.querySelector('.sound');
-const audio = document.getElementById('reggaeton-radio');
 
 let credit = 10; // Crédito inicial
 let bet = 2; // Apuesta por giro
 let activeLines = 1; // Líneas activas (1 para la línea 3)
-let isPlaying = false;
 
 const spinSpeed = 100; // Velocidad de cambio entre imágenes
 const numSpins = 20; // Número de veces que cada columna "gira"
 
 // Pagos para diferentes combinaciones
 const payouts = {
-    'https://jackpot-peach.vercel.app/img1.png': { 3: 8, 4: 20, 5: 75 },
+    'https://jackpot-peach.vercel.app/img1.png': { 3: 0, 4: 20, 5: 75 },
     'https://jackpot-peach.vercel.app/img2.png': { 3: 3, 4: 6, 5: 15 },
     'https://jackpot-peach.vercel.app/img3.png': { 3: 4, 4: 8, 5: 20 },
-    'https://jackpot-peach.vercel.app/img4.png': { 3: 6, 4: 15, 5: 47 },
+    'https://jackpot-peach.vercel.app/img4.png': { 3: 0, 4: 15, 5: 47 },
     'https://jackpot-peach.vercel.app/img5.png': { 3: 2, 4: 4, 5: 10 },
-    'https://jackpot-peach.vercel.app/img6.png': { 3: 4, 4: 13, 5: 36 },
-    'https://jackpot-peach.vercel.app/img7.png': { 3: 5, 4: 10, 5: 28 },
+    'https://jackpot-peach.vercel.app/img6.png': { 3: 0, 4: 13, 5: 36 },
+    'https://jackpot-peach.vercel.app/img7.png': { 3: 0, 4: 10, 5: 28 },
     'https://jackpot-peach.vercel.app/img8.png': { 3: 1, 4: 3, 5: 7 },
 };
 
 // Función para dibujar las líneas activas
 function drawActiveLines() {
+    // Limpiar las líneas existentes
     const linesContainer = document.querySelector('.lines-container');
     linesContainer.innerHTML = '';
 
+    // Dibujar nuevas líneas
     for (let i = 0; i < activeLines; i++) {
         const lineIndex = 2 + i - Math.floor((activeLines - 1) / 2);
         const line = document.createElement('div');
         line.className = 'active-line';
-        line.style.top = `${20 * lineIndex}%`;
+        line.style.top = ${20 * lineIndex}%; // Ajusta la posición según el tamaño del slot
         linesContainer.appendChild(line);
     }
 }
@@ -587,7 +586,7 @@ function updateBet() {
 // Función para incrementar la apuesta
 increaseBetButton.addEventListener('click', () => {
     if (activeLines < 5) {
-        activeLines += 2;
+        activeLines += 2; // Incrementar de 1 a 3 y de 3 a 5 líneas
         updateBet();
     }
 });
@@ -595,7 +594,7 @@ increaseBetButton.addEventListener('click', () => {
 // Función para disminuir la apuesta
 decreaseBetButton.addEventListener('click', () => {
     if (activeLines > 1) {
-        activeLines -= 2;
+        activeLines -= 2; // Decrementar de 5 a 3 y de 3 a 1 líneas
         updateBet();
     }
 });
@@ -631,77 +630,118 @@ function spinReel(reel, numSpins) {
 }
 
 // Función para iniciar el giro de todas las columnas
-async function startSpinning() {
+function startSpinning() {
     if (credit < bet) {
         alert("No tienes suficiente crédito para continuar.");
         return;
     }
 
     credit -= bet; // Descontar la apuesta del crédito
+
     updateDisplay(0); // Mostrar el crédito actualizado
 
-    // Barajar las imágenes en cada columna
+    // Barajar las imágenes de cada columna de manera diferente
     reels.forEach(reel => {
-        shuffle([...reel.children]); // Barajar las imágenes
+        const images = Array.from(reel.querySelectorAll('img'));
+        shuffle(images);
+        images.forEach(img => reel.appendChild(img));
     });
 
-    // Girar todas las columnas
-    await Promise.all(Array.from(reels).map(reel => spinReel(reel, numSpins)));
+    const spinPromises = Array.from(reels).map((reel) => {
+        const spinsForThisReel = numSpins + Math.floor(Math.random() * 10);
+        return spinReel(reel, spinsForThisReel);
+    });
 
-    // Mostrar resultados
-    calculateWinnings();
+    Promise.all(spinPromises).then(() => {
+        const winnings = checkForMatches();
+        credit += winnings;
+        updateDisplay(winnings);
+    });
 }
 
-// Función para calcular las ganancias
-function calculateWinnings() {
-    const results = Array.from(reels).map(reel => reel.querySelector('img').src);
-    const winnings = calculateLineWinnings(results);
-    credit += winnings;
-    updateDisplay(winnings);
+// Función para obtener las imágenes de cada carrete
+function getReelImages(reel) {
+    return Array.from(reel.querySelectorAll('img')).map(img => img.src);
 }
 
-// Función para calcular las ganancias de una línea específica
-function calculateLineWinnings(results) {
-    let winnings = 0;
-    const lineResults = [];
+// Función para obtener las imágenes de cada fila
+function getLineImages() {
+    return Array.from(reels).map(reel => getReelImages(reel));
+}
 
-    for (let i = 0; i < results.length; i++) {
-        lineResults.push(results[i]);
+// Función para verificar coincidencias y calcular ganancias
+function checkForMatches() {
+    const lineImages = getLineImages();
+    let totalWinnings = 0;
+
+    for (let row = 0; row < 5; row++) {
+        const rowImages = lineImages.map(images => images[row]);
+        const counts = {};
+        rowImages.forEach(img => {
+            counts[img] = (counts[img] || 0) + 1;
+        });
+
+        let matchCount = 0;
+        let matchImg = null;
+        Object.entries(counts).forEach(([img, count]) => {
+            // Verifica que haya al menos 3 coincidencias y que el pago para 3 sea mayor que 0
+            if (count >= 3 && payouts[img][3] > 0) {
+                matchCount = Math.max(matchCount, count);
+                matchImg = img;
+            }
+        });
+
+        // Solo cuenta si la coincidencia está en una línea activa
+        if (matchCount >= 3 && isLineActive(row + 1)) {
+            highlightMatches(row, matchImg, matchCount);
+            totalWinnings += payouts[matchImg][matchCount] || 0;
+        }
     }
 
-    // Aquí puedes agregar la lógica para calcular las ganancias basadas en las imágenes visibles y los pagos
-    // Ejemplo básico:
-    const symbol = lineResults[0];
-    const count = lineResults.filter(result => result === symbol).length;
-    winnings = payouts[symbol]?.[count] || 0;
-
-    return winnings;
+    return totalWinnings;
 }
 
-// Función para actualizar la pantalla con el crédito y las ganancias
+// Verifica si una línea está activa
+function isLineActive(lineNumber) {
+    const activeLinesRange = {
+        1: [3],
+        3: [2, 3, 4],
+        5: [1, 2, 3, 4, 5]
+    };
+
+    return activeLinesRange[activeLines].includes(lineNumber);
+}
+
+// Función para resaltar y agrandar las coincidencias
+function highlightMatches(row, matchImg, matchCount) {
+    reels.forEach((reel, idx) => {
+        const img = reel.querySelectorAll('img')[row];
+        if (img.src === matchImg) {
+            const highlightClass = highlight-${matchCount};
+            img.classList.add(highlightClass);
+            // Añadir la clase de animación para el agrandamiento
+            img.classList.add('flash-twice');
+            setTimeout(() => {
+                img.classList.remove(highlightClass);
+                img.classList.remove('flash-twice');
+            }, 2000);
+        }
+    });
+}
+
+// Función para actualizar la pantalla
 function updateDisplay(winnings) {
-    creditDisplay.textContent = `Credit: $${credit}`;
-    betDisplay.textContent = `Bet: $${bet}`;
-    winningsDisplay.textContent = `Ganancias: $${winnings}`;
+    creditDisplay.textContent = Credit: $${credit};
+    betDisplay.textContent = Bet: $${bet};
+    winningsDisplay.textContent = Ganancias: $${winnings};
 }
 
-// Función para alternar el audio
-function toggleAudio() {
-    if (isPlaying) {
-        audio.pause();
-        isPlaying = false;
-    } else {
-        audio.play();
-        isPlaying = true;
-    }
-}
-
-// Asignar la función de giro al botón
+// Event listener para el botón de giro
 spinButton.addEventListener('click', startSpinning);
 
-// Inicializar la pantalla
+// Iniciar con las líneas y apuesta predeterminadas
+drawActiveLines();
 updateBet();
-
 
 
   </script>
