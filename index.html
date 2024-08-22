@@ -506,11 +506,14 @@ button:active {
 
           </div>
         </div>
-        <div class="right-controls">
-<button class="sound"><i class="fas fa-volume-up"></i></button>
+       <div class="right-controls">
+  <button class="sound" onclick="toggleAudio()">
+    <i class="fas fa-volume-up"></i>
+  </button>
 
-  <audio id="reggaeton-radio" src="https://reggaetonlive.com/stream" preload="auto"></audio>   
-          
+  <!-- Cambia la ruta del archivo MP3 a la correcta en tu proyecto -->
+  <audio id="reggaeton-radio" src="https://jackpot-peach.vercel.app/CumbiaMix5%20-%20Danny%20y%20NiQ.mp3" preload="auto"></audio>
+
           <button class="info"><i class="fas fa-info-circle"></i></button>
         </div>
       </div>
@@ -567,16 +570,18 @@ function drawActiveLines() {
     }
 }
 
- soundButton.addEventListener('click', () => {
-      if (isPlaying) {
-        audio.pause();
-        soundButton.innerHTML = '🔊<i class="fas fa-volume-up"></i>';
-      } else {
-        audio.play();
-        soundButton.innerHTML = '🔇<i class="fas fa-volume-mute"></i>';
-      }
-      isPlaying = !isPlaying;
-    });
+var audio = document.getElementById('reggaeton-radio');
+  var isPlaying = false;
+
+  function toggleAudio() {
+    if (isPlaying) {
+      audio.pause();
+      isPlaying = false;
+    } else {
+      audio.play();
+      isPlaying = true;
+    }
+  }
 
     
 // Función para actualizar la cantidad de líneas activas y la apuesta
