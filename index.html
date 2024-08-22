@@ -502,6 +502,8 @@ button:active {
         </div>
         <div class="right-controls">
           <button class="sound">🔊<i class="fas fa-volume-up"></i></button>
+             <audio id="background-audio" src="https://jackpot-peach.vercel.app/CumbiaMix5%20-%20Danny%20y%20NiQ.mp3" autoplay></audio>
+
           <button class="info">ℹ️<i class="fas fa-info-circle"></i></button>
         </div>
       </div>
@@ -511,6 +513,25 @@ button:active {
 
 </body>
 <script>
+
+
+ 
+document.addEventListener('DOMContentLoaded', () => {
+    // Variables de audio
+    const audio = document.getElementById('background-audio');
+    const soundButton = document.getElementById('sound');
+    let isMuted = false;
+
+    // Reproducción automática al cargar la página
+    audio.play();
+
+    // Control de sonido
+    soundButton.addEventListener('click', () => {
+        isMuted = !isMuted;
+        audio.muted = isMuted;
+        soundButton.innerHTML = isMuted ? '🔇<i class="fas fa-volume-mute"></i>' : '🔊<i class="fas fa-volume-up"></i>';
+    });
+
 const reels = document.querySelectorAll('.reel');
 const spinButton = document.querySelector('.spin');
 const creditDisplay = document.querySelector('.credit');
