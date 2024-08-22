@@ -513,8 +513,7 @@ button:active {
 
 </body>
 <script>
-
- const reels = document.querySelectorAll('.reel');
+const reels = document.querySelectorAll('.reel');
 const spinButton = document.querySelector('.spin');
 const creditDisplay = document.querySelector('.credit');
 const betDisplay = document.querySelector('.bet');
@@ -554,7 +553,7 @@ function drawActiveLines() {
         const lineIndex = 2 + i - Math.floor((activeLines - 1) / 2);
         const line = document.createElement('div');
         line.className = 'active-line';
-        line.style.top = ${lineIndex * lineHeight}%; // Ajusta la posición según el tamaño del slot
+        line.style.top = `${lineIndex * lineHeight}%`; // Ajusta la posición según el tamaño del slot
         linesContainer.appendChild(line);
     }
 }
@@ -693,16 +692,16 @@ function highlightMatch(lineIndex, symbol) {
         const images = Array.from(reel.querySelectorAll('img'));
         const img = images.find(img => img.src === symbol);
         if (img) {
-            img.classList.add(highlight-${activeLines});
+            img.classList.add(`highlight-${activeLines}`);
         }
     });
 }
 
 // Función para actualizar la pantalla
 function updateDisplay(winnings) {
-    creditDisplay.textContent = Credit: $${credit};
-    betDisplay.textContent = Bet: $${bet};
-    winningsDisplay.textContent = Ganancias: $${winnings};
+    creditDisplay.textContent = `Credit: $${credit}`;
+    betDisplay.textContent = `Bet: $${bet}`;
+    winningsDisplay.textContent = `Ganancias: $${winnings}`;
 }
 
 // Añadir evento al botón de girar
