@@ -661,15 +661,24 @@ function getLineImages() {
     return Array.from(reels).map(reel => getReelImages(reel));
 }
 
-// Función para comprobar coincidencias
 function checkForMatches() {
     const lineImages = getLineImages();
     let totalWinnings = 0;
 
-    for (let i = 0; i < 5; i++) {
-        const symbols = lineImages.map(images => images[i]);
+    // Ajuste según las líneas activas
+    const linesToCheck = {
+        1: [2], // Solo línea del medio
+        3: [1, 2, 3], // Tres líneas centrales
+        5: [0, 1, 2, 3, 4] // Todas las líneas
+    };
+
+    const lines = linesToCheck[activeLines];
+
+    for (const line of lines) {
+        const symbols = lineImages.map(images => images[line]);
         const uniqueSymbols = [...new Set(symbols)];
 
+        // Verificar si todas las imágenes de la línea son iguales
         if (uniqueSymbols.length === 1) {
             const symbol = uniqueSymbols[0];
             const count = symbols.length;
@@ -677,7 +686,7 @@ function checkForMatches() {
 
             if (payout > 0) {
                 // Resaltar coincidencias
-                highlightMatch(i, symbol);
+                highlightMatch(line, symbol);
                 totalWinnings += payout;
             }
         }
@@ -685,6 +694,7 @@ function checkForMatches() {
 
     return totalWinnings;
 }
+
 
 // Función para resaltar las coincidencias en la línea
 function highlightMatch(lineIndex, symbol) {
