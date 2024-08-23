@@ -521,7 +521,7 @@ const winningsDisplay = document.querySelector('.winnings');
 const increaseBetButton = document.querySelector('.increase-bet');
 const decreaseBetButton = document.querySelector('.decrease-bet');
 
-let credit = 20; // Crédito inicial
+let credit = 10; // Crédito inicial
 let bet = 2; // Apuesta por giro
 let activeLines = 1; // Líneas activas (1 para la línea 3)
 
@@ -553,7 +553,7 @@ function drawActiveLines() {
         const lineIndex = 2 + i - Math.floor((activeLines - 1) / 2);
         const line = document.createElement('div');
         line.className = 'active-line';
-        line.style.top = `${lineIndex * lineHeight}%`; // Ajusta la posición según el tamaño del slot
+        line.style.top = ${lineIndex * lineHeight}%; // Ajusta la posición según el tamaño del slot
         linesContainer.appendChild(line);
     }
 }
@@ -661,24 +661,15 @@ function getLineImages() {
     return Array.from(reels).map(reel => getReelImages(reel));
 }
 
+// Función para comprobar coincidencias
 function checkForMatches() {
     const lineImages = getLineImages();
     let totalWinnings = 0;
 
-    // Ajuste según las líneas activas
-    const linesToCheck = {
-        1: [2], // Solo línea del medio
-        3: [1, 2, 3], // Tres líneas centrales
-        5: [0, 1, 2, 3, 4] // Todas las líneas
-    };
-
-    const lines = linesToCheck[activeLines];
-
-    for (const line of lines) {
-        const symbols = lineImages.map(images => images[line]);
+    for (let i = 0; i < 5; i++) {
+        const symbols = lineImages.map(images => images[i]);
         const uniqueSymbols = [...new Set(symbols)];
 
-        // Verificar si todas las imágenes de la línea son iguales
         if (uniqueSymbols.length === 1) {
             const symbol = uniqueSymbols[0];
             const count = symbols.length;
@@ -686,7 +677,7 @@ function checkForMatches() {
 
             if (payout > 0) {
                 // Resaltar coincidencias
-                highlightMatch(line, symbol);
+                highlightMatch(i, symbol);
                 totalWinnings += payout;
             }
         }
@@ -695,23 +686,22 @@ function checkForMatches() {
     return totalWinnings;
 }
 
-
 // Función para resaltar las coincidencias en la línea
 function highlightMatch(lineIndex, symbol) {
     reels.forEach((reel, reelIndex) => {
         const images = Array.from(reel.querySelectorAll('img'));
         const img = images.find(img => img.src === symbol);
         if (img) {
-            img.classList.add(`highlight-${activeLines}`);
+            img.classList.add(highlight-${activeLines});
         }
     });
 }
 
 // Función para actualizar la pantalla
 function updateDisplay(winnings) {
-    creditDisplay.textContent = `Credit: $${credit}`;
-    betDisplay.textContent = `Bet: $${bet}`;
-    winningsDisplay.textContent = `Ganancias: $${winnings}`;
+    creditDisplay.textContent = Credit: $${credit};
+    betDisplay.textContent = Bet: $${bet};
+    winningsDisplay.textContent = Ganancias: $${winnings};
 }
 
 // Añadir evento al botón de girar
