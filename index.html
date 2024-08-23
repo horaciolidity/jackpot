@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -391,22 +391,23 @@ button:active {
   margin: 5px 0;
 }
 
-/* Estilo para resaltar las líneas activas */
-.active-line {
-    border-top: 2px solid red; /* Línea superior de la imagen */
-    border-bottom: 2px solid red; /* Línea inferior de la imagen */
-    margin: 2px 0; /* Espacio para la línea */
-    box-sizing: border-box; /* Incluir el borde en el tamaño del cuadro */
-}
 .lines-container {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 120%;
   pointer-events: none; /* Asegura que las líneas no interfieran con los clics */
+  z-index: 1; /* Asegúrate de que las líneas se dibujen sobre el contenido */
 }
 
+.active-line {
+  position: absolute;
+  width: 100%;
+  height: 2px; /* Grosor de la línea */
+  background-color: red; /* Color de la línea */
+  z-index: 2; /* Asegúrate de que las líneas se dibujen sobre el contenido */
+}
 
   </style>
 </head>
@@ -501,6 +502,8 @@ button:active {
         </div>
         <div class="right-controls">
           <button class="sound">🔊<i class="fas fa-volume-up"></i></button>
+             <audio id="background-audio" src="https://jackpot-peach.vercel.app/CumbiaMix5%20-%20Danny%20y%20NiQ.mp3" autoplay></audio>
+
           <button class="info">ℹ️<i class="fas fa-info-circle"></i></button>
         </div>
       </div>
@@ -509,7 +512,7 @@ button:active {
 
 
 </body>
-  <script>
+<script>
 const reels = document.querySelectorAll('.reel');
 const spinButton = document.querySelector('.spin');
 const creditDisplay = document.querySelector('.credit');
@@ -518,7 +521,7 @@ const winningsDisplay = document.querySelector('.winnings');
 const increaseBetButton = document.querySelector('.increase-bet');
 const decreaseBetButton = document.querySelector('.decrease-bet');
 
-let credit = 10; // Crédito inicial
+let credit = 20; // Crédito inicial
 let bet = 2; // Apuesta por giro
 let activeLines = 1; // Líneas activas (1 para la línea 3)
 
@@ -527,28 +530,30 @@ const numSpins = 20; // Número de veces que cada columna "gira"
 
 // Pagos para diferentes combinaciones
 const payouts = {
-    'https://jackpot-peach.vercel.app/img1.png': { 3: 0, 4: 20, 5: 75 },
+    'https://jackpot-peach.vercel.app/img1.png': { 3: 8, 4: 20, 5: 75 },
     'https://jackpot-peach.vercel.app/img2.png': { 3: 3, 4: 6, 5: 15 },
     'https://jackpot-peach.vercel.app/img3.png': { 3: 4, 4: 8, 5: 20 },
-    'https://jackpot-peach.vercel.app/img4.png': { 3: 0, 4: 15, 5: 47 },
+    'https://jackpot-peach.vercel.app/img4.png': { 3: 6, 4: 15, 5: 47 },
     'https://jackpot-peach.vercel.app/img5.png': { 3: 2, 4: 4, 5: 10 },
-    'https://jackpot-peach.vercel.app/img6.png': { 3: 0, 4: 13, 5: 36 },
-    'https://jackpot-peach.vercel.app/img7.png': { 3: 0, 4: 10, 5: 28 },
+    'https://jackpot-peach.vercel.app/img6.png': { 3: 5, 4: 13, 5: 36 },
+    'https://jackpot-peach.vercel.app/img7.png': { 3: 4, 4: 10, 5: 28 },
     'https://jackpot-peach.vercel.app/img8.png': { 3: 1, 4: 3, 5: 7 },
 };
 
-// Función para dibujar las líneas activas
 function drawActiveLines() {
     // Limpiar las líneas existentes
     const linesContainer = document.querySelector('.lines-container');
     linesContainer.innerHTML = '';
+
+    // Ajuste según el número de líneas activas
+    const lineHeight = 100 / 5; // Altura en porcentaje para cada fila
 
     // Dibujar nuevas líneas
     for (let i = 0; i < activeLines; i++) {
         const lineIndex = 2 + i - Math.floor((activeLines - 1) / 2);
         const line = document.createElement('div');
         line.className = 'active-line';
-        line.style.top = ${20 * lineIndex}%; // Ajusta la posición según el tamaño del slot
+        line.style.top = `${lineIndex * lineHeight}%`; // Ajusta la posición según el tamaño del slot
         linesContainer.appendChild(line);
     }
 }
@@ -656,80 +661,64 @@ function getLineImages() {
     return Array.from(reels).map(reel => getReelImages(reel));
 }
 
-// Función para verificar coincidencias y calcular ganancias
 function checkForMatches() {
     const lineImages = getLineImages();
     let totalWinnings = 0;
 
-    for (let row = 0; row < 5; row++) {
-        const rowImages = lineImages.map(images => images[row]);
-        const counts = {};
-        rowImages.forEach(img => {
-            counts[img] = (counts[img] || 0) + 1;
-        });
+    // Ajuste según las líneas activas
+    const linesToCheck = {
+        1: [2], // Solo línea del medio
+        3: [1, 2, 3], // Tres líneas centrales
+        5: [0, 1, 2, 3, 4] // Todas las líneas
+    };
 
-        let matchCount = 0;
-        let matchImg = null;
-        Object.entries(counts).forEach(([img, count]) => {
-            // Verifica que haya al menos 3 coincidencias y que el pago para 3 sea mayor que 0
-            if (count >= 3 && payouts[img][3] > 0) {
-                matchCount = Math.max(matchCount, count);
-                matchImg = img;
+    const lines = linesToCheck[activeLines];
+
+    for (const line of lines) {
+        const symbols = lineImages.map(images => images[line]);
+        const uniqueSymbols = [...new Set(symbols)];
+
+        // Verificar si todas las imágenes de la línea son iguales
+        if (uniqueSymbols.length === 1) {
+            const symbol = uniqueSymbols[0];
+            const count = symbols.length;
+            const payout = payouts[symbol] ? payouts[symbol][count] : 0;
+
+            if (payout > 0) {
+                // Resaltar coincidencias
+                highlightMatch(line, symbol);
+                totalWinnings += payout;
             }
-        });
-
-        // Solo cuenta si la coincidencia está en una línea activa
-        if (matchCount >= 3 && isLineActive(row + 1)) {
-            highlightMatches(row, matchImg, matchCount);
-            totalWinnings += payouts[matchImg][matchCount] || 0;
         }
     }
 
     return totalWinnings;
 }
 
-// Verifica si una línea está activa
-function isLineActive(lineNumber) {
-    const activeLinesRange = {
-        1: [3],
-        3: [2, 3, 4],
-        5: [1, 2, 3, 4, 5]
-    };
 
-    return activeLinesRange[activeLines].includes(lineNumber);
-}
-
-// Función para resaltar y agrandar las coincidencias
-function highlightMatches(row, matchImg, matchCount) {
-    reels.forEach((reel, idx) => {
-        const img = reel.querySelectorAll('img')[row];
-        if (img.src === matchImg) {
-            const highlightClass = highlight-${matchCount};
-            img.classList.add(highlightClass);
-            // Añadir la clase de animación para el agrandamiento
-            img.classList.add('flash-twice');
-            setTimeout(() => {
-                img.classList.remove(highlightClass);
-                img.classList.remove('flash-twice');
-            }, 2000);
+// Función para resaltar las coincidencias en la línea
+function highlightMatch(lineIndex, symbol) {
+    reels.forEach((reel, reelIndex) => {
+        const images = Array.from(reel.querySelectorAll('img'));
+        const img = images.find(img => img.src === symbol);
+        if (img) {
+            img.classList.add(`highlight-${activeLines}`);
         }
     });
 }
 
 // Función para actualizar la pantalla
 function updateDisplay(winnings) {
-    creditDisplay.textContent = Credit: $${credit};
-    betDisplay.textContent = Bet: $${bet};
-    winningsDisplay.textContent = Ganancias: $${winnings};
+    creditDisplay.textContent = `Credit: $${credit}`;
+    betDisplay.textContent = `Bet: $${bet}`;
+    winningsDisplay.textContent = `Ganancias: $${winnings}`;
 }
 
-// Event listener para el botón de giro
+// Añadir evento al botón de girar
 spinButton.addEventListener('click', startSpinning);
 
-// Iniciar con las líneas y apuesta predeterminadas
-drawActiveLines();
-updateBet();
+updateBet(); // Inicializar la apuesta y líneas activas
 
+</script>
 
-  </script>
 </html>
