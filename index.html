@@ -695,13 +695,12 @@ function checkForMatches() {
     return totalWinnings;
 }
 
-
 // Función para resaltar las coincidencias en la línea
 function highlightMatch(lineIndex, symbol) {
     reels.forEach((reel, reelIndex) => {
         const images = Array.from(reel.querySelectorAll('img'));
-        const img = images.find(img => img.src === symbol);
-        if (img) {
+        const img = images[lineIndex]; // Ajuste para seleccionar la imagen correcta según el índice de línea
+        if (img && img.src === symbol) {
             img.classList.add(`highlight-${activeLines}`);
         }
     });
