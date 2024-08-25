@@ -517,7 +517,7 @@ const reels = document.querySelectorAll('.reel');
 const spinButton = document.querySelector('.spin');
 const creditDisplay = document.querySelector('.credit');
 const betDisplay = document.querySelector('.bet');
-const winningsDisplay = document.querySelector('.winnings');
+const winningsDisplay = document.querySelector('.winnings'); // Verifica que esta clase esté correcta
 const increaseBetButton = document.querySelector('.increase-bet');
 const decreaseBetButton = document.querySelector('.decrease-bet');
 
@@ -694,12 +694,13 @@ function checkForMatches() {
 
 // Función para resaltar las coincidencias en la línea
 function highlightMatch(lineIndex, symbol) {
-    reels.forEach((reel, reelIndex) => {
+    reels.forEach((reel) => {
         const images = Array.from(reel.querySelectorAll('img'));
-        const img = images.find(img => img.src === symbol);
-        if (img) {
-            img.classList.add(`highlight-${activeLines}`);
-        }
+        images.forEach(img => {
+            if (img.src === symbol) {
+                img.classList.add(`highlight-${activeLines}`);
+            }
+        });
     });
 }
 
