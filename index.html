@@ -523,7 +523,7 @@ const decreaseBetButton = document.querySelector('.decrease-bet');
 
 let credit = 20; // Crédito inicial
 let bet = 2; // Apuesta por giro
-let activeLines = 1; // Líneas activas (1 para la línea 3)
+let activeLines = 1; // Líneas activas, línea 3 (central) siempre activa
 
 const spinSpeed = 100; // Velocidad de cambio entre imágenes
 const numSpins = 20; // Número de veces que cada columna "gira"
@@ -540,21 +540,28 @@ const payouts = {
     'https://jackpot-peach.vercel.app/img8.png': { 3: 1, 4: 3, 5: 7 },
 };
 
+// Función para dibujar las líneas activas
 function drawActiveLines() {
-    // Limpiar las líneas existentes
     const linesContainer = document.querySelector('.lines-container');
     linesContainer.innerHTML = '';
 
-    // Ajuste según el número de líneas activas
     const lineHeight = 100 / 5; // Altura en porcentaje para cada fila
 
-    // Dibujar nuevas líneas
-    for (let i = 0; i < activeLines; i++) {
+    // Siempre dibujar la línea central (3)
+    const centralLine = document.createElement('div');
+    centralLine.className = 'active-line';
+    centralLine.style.top = `${2 * lineHeight}%`;
+    linesContainer.appendChild(centralLine);
+
+    // Dibujar nuevas líneas según la cantidad de líneas activas
+    for (let i = 1; i < activeLines; i++) {
         const lineIndex = 2 + i - Math.floor((activeLines - 1) / 2);
-        const line = document.createElement('div');
-        line.className = 'active-line';
-        line.style.top = `${lineIndex * lineHeight}%`; // Ajusta la posición según el tamaño del slot
-        linesContainer.appendChild(line);
+        if (lineIndex !== 2) { // Evitar redibujar la línea central
+            const line = document.createElement('div');
+            line.className = 'active-line';
+            line.style.top = `${lineIndex * lineHeight}%`;
+            linesContainer.appendChild(line);
+        }
     }
 }
 
@@ -562,13 +569,13 @@ function drawActiveLines() {
 function updateBet() {
     switch (activeLines) {
         case 1:
-            bet = 2;
+            bet = 2; // Solo la línea central (3)
             break;
         case 3:
-            bet = 6;
+            bet = 6; // Líneas 2, 3, 4
             break;
         case 5:
-            bet = 10;
+            bet = 10; // Todas las líneas 1 a 5
             break;
     }
     updateDisplay(0); // Actualiza la pantalla sin ganancias
@@ -590,14 +597,6 @@ decreaseBetButton.addEventListener('click', () => {
         updateBet();
     }
 });
-
-// Función para barajar imágenes de manera aleatoria
-function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-}
 
 // Función para girar una columna
 function spinReel(reel, numSpins) {
@@ -665,11 +664,10 @@ function checkForMatches() {
     const lineImages = getLineImages();
     let totalWinnings = 0;
 
-    // Ajuste según las líneas activas
     const linesToCheck = {
-        1: [2], // Solo línea del medio
-        3: [1, 2, 3], // Tres líneas centrales
-        5: [0, 1, 2, 3, 4] // Todas las líneas
+        1: [2], // Solo línea central (3)
+        3: [1, 2, 3], // Líneas 2, 3, 4
+        5: [0, 1, 2, 3, 4] // Todas las líneas 1 a 5
     };
 
     const lines = linesToCheck[activeLines];
@@ -685,9 +683,8 @@ function checkForMatches() {
             const payout = payouts[symbol] ? payouts[symbol][count] : 0;
 
             if (payout > 0) {
-                // Resaltar coincidencias
                 highlightMatch(line, symbol);
-                totalWinnings += payout;
+                totalWinnings += payout * (bet / activeLines); // Ajuste para pagar de acuerdo a la apuesta
             }
         }
     }
@@ -699,8 +696,8 @@ function checkForMatches() {
 function highlightMatch(lineIndex, symbol) {
     reels.forEach((reel, reelIndex) => {
         const images = Array.from(reel.querySelectorAll('img'));
-        const img = images[lineIndex]; // Ajuste para seleccionar la imagen correcta según el índice de línea
-        if (img && img.src === symbol) {
+        const img = images.find(img => img.src === symbol);
+        if (img) {
             img.classList.add(`highlight-${activeLines}`);
         }
     });
@@ -711,6 +708,14 @@ function updateDisplay(winnings) {
     creditDisplay.textContent = `Credit: $${credit}`;
     betDisplay.textContent = `Bet: $${bet}`;
     winningsDisplay.textContent = `Ganancias: $${winnings}`;
+}
+
+// Barajar imágenes de manera aleatoria
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
 }
 
 // Añadir evento al botón de girar
