@@ -547,22 +547,15 @@ function drawActiveLines() {
 
     const lineHeight = 100 / 5; // Altura en porcentaje para cada fila
 
-    // Siempre dibujar la línea central (3)
-    const centralLine = document.createElement('div');
-    centralLine.className = 'active-line';
-    centralLine.style.top = `${2 * lineHeight}%`;
-    linesContainer.appendChild(centralLine);
+    // Array con posiciones de las líneas
+    const linePositions = [0, 1, 2, 3, 4];
 
-    // Dibujar nuevas líneas según la cantidad de líneas activas
-    for (let i = 1; i < activeLines; i++) {
-        const lineIndex = 2 + i - Math.floor((activeLines - 1) / 2);
-        if (lineIndex !== 2) { // Evitar redibujar la línea central
-            const line = document.createElement('div');
-            line.className = 'active-line';
-            line.style.top = `${lineIndex * lineHeight}%`;
-            linesContainer.appendChild(line);
-        }
-    }
+    linePositions.slice(2 - Math.floor((activeLines - 1) / 2), 3 + Math.floor((activeLines - 1) / 2)).forEach((lineIndex) => {
+        const line = document.createElement('div');
+        line.className = 'active-line';
+        line.style.top = `${lineIndex * lineHeight}%`;
+        linesContainer.appendChild(line);
+    });
 }
 
 // Función para actualizar la cantidad de líneas activas y la apuesta
@@ -657,7 +650,15 @@ function getReelImages(reel) {
 
 // Función para obtener las imágenes de cada fila
 function getLineImages() {
-    return Array.from(reels).map(reel => getReelImages(reel));
+    const imagesMatrix = [];
+    for (let row = 0; row < 5; row++) {
+        imagesMatrix[row] = [];
+        reels.forEach(reel => {
+            const img = reel.querySelectorAll('img')[row];
+            imagesMatrix[row].push(img.src);
+        });
+    }
+    return imagesMatrix;
 }
 
 // Función para verificar las coincidencias
@@ -665,6 +666,7 @@ function checkForMatches() {
     const lineImages = getLineImages();
     let totalWinnings = 0;
 
+    // Líneas a verificar basadas en las líneas activas
     const linesToCheck = {
         1: [2], // Solo línea central (3)
         3: [1, 2, 3], // Líneas 2, 3, 4
@@ -673,22 +675,22 @@ function checkForMatches() {
 
     const lines = linesToCheck[activeLines];
 
-    for (const line of lines) {
-        const symbols = lineImages.map(images => images[line]);
-        const uniqueSymbols = [...new Set(symbols)];
+    lines.forEach(lineIndex => {
+        const symbols = lineImages[lineIndex];
+        const symbolCounts = symbols.reduce((acc, symbol) => {
+            acc[symbol] = (acc[symbol] || 0) + 1;
+            return acc;
+        }, {});
 
-        // Verificar si todas las imágenes de la línea son iguales
-        if (uniqueSymbols.length === 1) {
-            const symbol = uniqueSymbols[0];
-            const count = symbols.length;
-            const payout = payouts[symbol] ? payouts[symbol][count] : 0;
-
-            if (payout > 0) {
-                highlightMatch(line, symbol);
-                totalWinnings += payout * (bet / activeLines); // Ajuste para pagar de acuerdo a la apuesta
+        // Verificar si hay 3, 4 o 5 símbolos iguales en la línea
+        Object.keys(symbolCounts).forEach(symbol => {
+            const count = symbolCounts[symbol];
+            if (count >= 3 && payouts[symbol] && payouts[symbol][count]) {
+                highlightMatch(lineIndex, symbol);
+                totalWinnings += payouts[symbol][count] * (bet / activeLines);
             }
-        }
-    }
+        });
+    });
 
     return totalWinnings;
 }
@@ -698,10 +700,10 @@ function highlightMatch(lineIndex, symbol) {
     reels.forEach((reel) => {
         const images = Array.from(reel.querySelectorAll('img'));
         images.forEach((img, idx) => {
-            if (img.src === symbol) {
-                img.classList.add(`highlight-${lineIndex}`);
+            if (img.src === symbol && idx === lineIndex) {
+                img.classList.add('highlight'); // Resalta solo si está en la línea y es el símbolo correcto
             } else {
-                img.classList.remove(`highlight-${lineIndex}`);
+                img.classList.remove('highlight');
             }
         });
     });
@@ -727,7 +729,6 @@ spinButton.addEventListener('click', startSpinning);
 
 // Inicializar la visualización de apuestas y líneas
 updateBet();
-
 
 </script>
 
