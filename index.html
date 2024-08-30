@@ -517,7 +517,7 @@ const reels = document.querySelectorAll('.reel');
 const spinButton = document.querySelector('.spin');
 const creditDisplay = document.querySelector('.credit');
 const betDisplay = document.querySelector('.bet');
-const winningsDisplay = document.querySelector('.winnings'); // Verifica que esta clase esté correcta
+const winningsDisplay = document.querySelector('.winnings');
 const increaseBetButton = document.querySelector('.increase-bet');
 const decreaseBetButton = document.querySelector('.decrease-bet');
 
@@ -660,6 +660,7 @@ function getLineImages() {
     return Array.from(reels).map(reel => getReelImages(reel));
 }
 
+// Función para verificar las coincidencias
 function checkForMatches() {
     const lineImages = getLineImages();
     let totalWinnings = 0;
@@ -724,7 +725,9 @@ function shuffle(array) {
 // Añadir evento al botón de girar
 spinButton.addEventListener('click', startSpinning);
 
-updateBet(); // Inicializar la apuesta y líneas activas
+// Inicializar la visualización de apuestas y líneas
+updateBet();
+nicializar la apuesta y líneas activas
 </script>
 
 </html>
