@@ -408,6 +408,28 @@ button:active {
   background-color: red; /* Color de la línea */
   z-index: 2; /* Asegúrate de que las líneas se dibujen sobre el contenido */
 }
+   .reel img.highlight-twice {
+  animation: scaleUpDownTwice 1s ease-in-out;
+}
+
+@keyframes scaleUpDownTwice {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(1);
+  }
+  75% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 
   </style>
 </head>
@@ -712,6 +734,22 @@ function updateDisplay(winnings) {
     betDisplay.textContent = `Apuesta: $${bet}`;
     winningsDisplay.textContent = `Ganancias: $${winnings}`;
 }
+ // Función para resaltar las coincidencias en la línea
+function highlightMatch(lineIndex, symbol) {
+    // Recorremos todas las columnas, resaltamos solo las imágenes en la línea activa
+    reels.forEach((reel, idx) => {
+        const img = reel.querySelectorAll('img')[lineIndex];
+        if (img.src === symbol) {
+            img.classList.add('highlight'); // Resalta la imagen coincidente
+            setTimeout(() => img.classList.remove('highlight'), 500); // Elimina el resaltado después de un tiempo
+            setTimeout(() => img.classList.add('highlight-twice'), 500); // Agranda dos veces
+        } else {
+            img.classList.remove('highlight');
+            img.classList.remove('highlight-twice');
+        }
+    });
+}
+
 
 // Barajar imágenes de manera aleatoria
 function shuffle(array) {
