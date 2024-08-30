@@ -697,15 +697,19 @@ function checkForMatches() {
 
 // Función para resaltar las coincidencias en la línea
 function highlightMatch(lineIndex, symbol) {
-    reels.forEach((reel) => {
-        const images = Array.from(reel.querySelectorAll('img'));
-        images.forEach((img, idx) => {
-            if (img.src === symbol && idx === lineIndex) {
-                img.classList.add('highlight'); // Resalta solo si está en la línea y es el símbolo correcto
-            } else {
-                img.classList.remove('highlight');
-            }
-        });
+    const lineElements = Array.from(reels[0].querySelectorAll('img')).map((_, idx) => ({
+        reel: reels[idx],
+        img: reels[idx].querySelectorAll('img')[lineIndex],
+    }));
+
+    lineElements.forEach(({ reel, img }) => {
+        if (img.src === symbol) {
+            img.classList.add('highlight'); // Resalta la imagen coincidente
+            setTimeout(() => img.classList.add('highlight-twice'), 500); // Resalta la imagen dos veces
+        } else {
+            img.classList.remove('highlight');
+            img.classList.remove('highlight-twice');
+        }
     });
 }
 
