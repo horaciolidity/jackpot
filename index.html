@@ -540,33 +540,6 @@ const payouts = {
     'https://jackpot-peach.vercel.app/img8.png': { 3: 1, 4: 3, 5: 7 },
 };
 
-const reels = document.querySelectorAll('.reel');
-const spinButton = document.querySelector('.spin');
-const creditDisplay = document.querySelector('.credit');
-const betDisplay = document.querySelector('.bet');
-const winningsDisplay = document.querySelector('.winnings');
-const increaseBetButton = document.querySelector('.increase-bet');
-const decreaseBetButton = document.querySelector('.decrease-bet');
-
-let credit = 20; // Crédito inicial
-let bet = 2; // Apuesta por giro
-let activeLines = 1; // Líneas activas, línea 3 (central) siempre activa
-
-const spinSpeed = 100; // Velocidad de cambio entre imágenes
-const numSpins = 20; // Número de veces que cada columna "gira"
-
-// Pagos para diferentes combinaciones
-const payouts = {
-    'https://jackpot-peach.vercel.app/img1.png': { 3: 8, 4: 20, 5: 75 },
-    'https://jackpot-peach.vercel.app/img2.png': { 3: 3, 4: 6, 5: 15 },
-    'https://jackpot-peach.vercel.app/img3.png': { 3: 4, 4: 8, 5: 20 },
-    'https://jackpot-peach.vercel.app/img4.png': { 3: 6, 4: 15, 5: 47 },
-    'https://jackpot-peach.vercel.app/img5.png': { 3: 2, 4: 4, 5: 10 },
-    'https://jackpot-peach.vercel.app/img6.png': { 3: 5, 4: 13, 5: 36 },
-    'https://jackpot-peach.vercel.app/img7.png': { 3: 4, 4: 10, 5: 28 },
-    'https://jackpot-peach.vercel.app/img8.png': { 3: 1, 4: 3, 5: 7 },
-};
-
 // Función para dibujar las líneas activas
 function drawActiveLines() {
     const linesContainer = document.querySelector('.lines-container');
@@ -719,15 +692,13 @@ function checkForMatches() {
 
 // Función para resaltar las coincidencias en la línea
 function highlightMatch(lineIndex, symbol) {
-    const lineImages = Array.from(reels[0].querySelectorAll('img')).map((_, idx) => ({
-        reel: reels[idx],
-        img: reels[idx].querySelectorAll('img')[lineIndex],
-    }));
-
-    lineImages.forEach(({ reel, img }) => {
+    // Recorremos todas las columnas, resaltamos solo las imágenes en la línea activa
+    reels.forEach((reel, idx) => {
+        const img = reel.querySelectorAll('img')[lineIndex];
         if (img.src === symbol) {
             img.classList.add('highlight'); // Resalta la imagen coincidente
-            setTimeout(() => img.classList.add('highlight-twice'), 500); // Resalta la imagen dos veces
+            setTimeout(() => img.classList.remove('highlight'), 500); // Elimina el resaltado después de un tiempo
+            setTimeout(() => img.classList.add('highlight-twice'), 500); // Resalta dos veces
         } else {
             img.classList.remove('highlight');
             img.classList.remove('highlight-twice');
