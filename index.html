@@ -971,6 +971,37 @@ function updateDisplay(winnings) {
         }, 1000); // Duración de la animación
     }
 }
+  // Cargar los archivos de sonido
+const sound3 = new Audio('https://jackpot-peach.vercel.app/fruit1.mp3');
+const sound4 = new Audio('https://jackpot-peach.vercel.app/fruit2.mp3');
+const sound5 = new Audio('https://jackpot-peach.vercel.app/fruit3.mp3');
+
+// Función para reproducir el sonido correspondiente
+function playWinSound(numberOfMatches) {
+  switch (numberOfMatches) {
+    case 3:
+      sound3.play();
+      break;
+    case 4:
+      sound4.play();
+      break;
+    case 5:
+      sound5.play();
+      break;
+    default:
+      break;
+  }
+}
+
+// Ejemplo de cómo llamar a la función al detectar una coincidencia
+function checkWin() {
+  const matches = getNumberOfMatches(); // Implementa esta función según tu lógica
+  
+  if (matches >= 3) {
+    playWinSound(matches);
+  }
+}
+
 
 
 // Barajar imágenes de manera aleatoria
