@@ -8,7 +8,7 @@
 
   <title>Wolf Gold Slot Machine</title>
   <style>
-    body {
+  body {
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
@@ -215,10 +215,20 @@ button:active {
   box-shadow: 0 2px #444;
 }
 
-   .settings, .sound, .info {
-  font-size: 24px;
-  width: 50px;
-  height: 50px;
+   /* Animación para el botón de ajustes (settings) */
+.settings {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+}
+
+.settings:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 16px rgba(0, 255, 255, 0.5);
+  color: #00ff99;
+}
+
+.settings:active {
+  transform: scale(0.9);
+  box-shadow: 0 4px 8px rgba(0, 255, 255, 0.3);
 }
 
 .spin-controls {
@@ -227,32 +237,36 @@ button:active {
 }
 
 .decrease-bet, .increase-bet {
-  font-size: 24px;
-  width: 50px;
-  height: 50px;
+  transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
+}
+
+.decrease-bet:hover, .increase-bet:hover {
+  transform: scale(1.1);
+  background: linear-gradient(45deg, #ff4d4d, #e60000);
+  color: #ffffff;
+}
+
+.decrease-bet:active, .increase-bet:active {
+  transform: scale(0.9);
+  background: linear-gradient(45deg, #cc0000, #990000);
 }
 .spin {
-  width: 120px;
-  height: 120px;
-  font-size: 24px;
-  text-transform: uppercase;
-  margin: 0 15px;
-  background: linear-gradient(45deg, #ff0000, #cc0000);
-  border-radius: 50%;
-  box-shadow: 0 6px #990000;
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .spin:hover {
-  background: linear-gradient(45deg, #ff4d4d, #e60000);
   transform: scale(1.1);
+  background: linear-gradient(45deg, #ff4d4d, #e60000);
+  box-shadow: 0 8px 16px rgba(255, 0, 0, 0.5);
 }
 
 .spin:active {
+  transform: scale(0.9);
   background: linear-gradient(45deg, #cc0000, #990000);
-  transform: scale(1.05);
-  box-shadow: 0 2px #660000;
+  box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3);
 }
 
+/* Animación adicional para el botón Spin que simula una palanca */
 .spin::before {
   content: '';
   position: absolute;
@@ -270,7 +284,6 @@ button:active {
 .spin:active::before {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
-
  .turbo-spin, .autoplay {
   padding: 10px 20px;
   border-radius: 30px;
@@ -553,7 +566,6 @@ button:active {
     transform: scale(1);
   }
 }
-
 
   </style>
 </head>
