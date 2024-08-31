@@ -759,6 +759,9 @@ const betDisplay = document.querySelector('.bet');
 const winningsDisplay = document.querySelector('.winnings');
 const increaseBetButton = document.querySelector('.increase-bet');
 const decreaseBetButton = document.querySelector('.decrease-bet');
+const winSound3 = document.getElementById('winSound3');
+const winSound4 = document.getElementById('winSound4');
+const winSound5 = document.getElementById('winSound5');
 
 let credit = 20; // Crédito inicial
 let bet = 2; // Apuesta por giro
@@ -779,6 +782,22 @@ const payouts = {
     'https://jackpot-peach.vercel.app/img8.png': { 3: 1, 4: 3, 5: 7 },
 };
 
+// Ajustar volumen de los sonidos
+winSound3.volume = 1.0;
+winSound4.volume = 1.0;
+winSound5.volume = 1.0;
+
+// Función para reproducir el sonido correspondiente
+function playWinSound(count) {
+    if (count === 3) {
+        winSound3.play();
+    } else if (count === 4) {
+        winSound4.play();
+    } else if (count === 5) {
+        winSound5.play();
+    }
+}
+
 // Función para dibujar las líneas activas
 function drawActiveLines() {
     const linesContainer = document.querySelector('.lines-container');
@@ -786,7 +805,6 @@ function drawActiveLines() {
 
     const lineHeight = 100 / 5; // Altura en porcentaje para cada fila
 
-    // Array con posiciones de las líneas
     const linePositions = [0, 1, 2, 3, 4];
 
     linePositions.slice(2 - Math.floor((activeLines - 1) / 2), 3 + Math.floor((activeLines - 1) / 2)).forEach((lineIndex) => {
@@ -879,6 +897,9 @@ function startSpinning() {
         const winnings = checkForMatches();
         credit += winnings;
         updateDisplay(winnings);
+        if (winnings > 0) {
+            playWinSound(winnings / (bet / activeLines)); // Llamar al sonido correspondiente
+        }
     });
 }
 
@@ -960,7 +981,6 @@ function highlightMatch(lineIndex, symbol) {
 function updateDisplay(winnings) {
     creditDisplay.textContent = `Crédito: $${credit}`;
     betDisplay.textContent = `Apuesta: $${bet}`;
-
     winningsDisplay.textContent = `Ganancias: $${winnings}`;
     
     // Resalta las ganancias si hay premio
@@ -971,38 +991,6 @@ function updateDisplay(winnings) {
         }, 1000); // Duración de la animación
     }
 }
-  // Cargar los archivos de sonido
-const sound3 = new Audio('https://jackpot-peach.vercel.app/fruit1.mp3');
-const sound4 = new Audio('https://jackpot-peach.vercel.app/fruit2.mp3');
-const sound5 = new Audio('https://jackpot-peach.vercel.app/fruit3.mp3');
-
-// Función para reproducir el sonido correspondiente
-function playWinSound(numberOfMatches) {
-  switch (numberOfMatches) {
-    case 3:
-      sound3.play();
-      break;
-    case 4:
-      sound4.play();
-      break;
-    case 5:
-      sound5.play();
-      break;
-    default:
-      break;
-  }
-}
-
-// Ejemplo de cómo llamar a la función al detectar una coincidencia
-function checkWin() {
-  const matches = getNumberOfMatches(); // Implementa esta función según tu lógica
-  
-  if (matches >= 3) {
-    playWinSound(matches);
-  }
-}
-
-
 
 // Barajar imágenes de manera aleatoria
 function shuffle(array) {
@@ -1017,7 +1005,6 @@ spinButton.addEventListener('click', startSpinning);
 
 // Inicializar la visualización de apuestas y líneas
 updateBet();
-
 
 </script>
 
