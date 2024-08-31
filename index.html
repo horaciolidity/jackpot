@@ -631,6 +631,17 @@ button:active {
     transform: scale(1);
   }
 }
+    #confetti-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Asegura que no interfiera con otros elementos */
+  overflow: hidden;
+  z-index: 9999; /* Asegúrate de que esté por encima de otros elementos */
+}
+
 
   </style>
 </head>
@@ -734,6 +745,10 @@ button:active {
 <audio id="sound-three" src="https://jackpot-peach.vercel.app/fruit1.mp3"></audio>
 <audio id="sound-four" src="https://jackpot-peach.vercel.app/fruit2.mp3"></audio>
 <audio id="sound-five" src="https://jackpot-peach.vercel.app/fruit3.mp3"></audio>
+
+    <!-- Contenedor para el confeti -->
+<div id="confetti-container"></div>
+
 
 </body>
 <script>
@@ -867,9 +882,7 @@ function startSpinning() {
         credit += winnings;
         updateDisplay(winnings);
       
-        if (winnings > 0) {
-        fireConfetti();
-    }
+       
         // Comprobar si el crédito ha llegado a cero después del giro
         if (credit <= 0) {
             setTimeout(checkForReload, 500); // Llamar a la función de recarga después de una pausa
@@ -992,17 +1005,32 @@ function updateDisplay(winnings) {
         document.getElementById('sound-five').play();
     }
 }
-function fireConfetti() {
-    // Configuración básica del confeti
-    confetti({
-        particleCount: 100, // Cantidad de partículas
-        spread: 70, // Ángulo de dispersión
-        origin: { y: 0.6 }, // Punto de origen
-        colors: ['#bb0000', '#ffffff', '#ff0000', '#ffff00', '#00ff00', '#0000ff'], // Colores de los papelitos
-        disableForReducedMotion: true // Desactivar si el usuario ha solicitado reducir el movimiento
-    });
+function showConfetti() {
+  // Configura el contenedor del confeti
+  const confettiContainer = document.getElementById('confetti-container');
+
+  // Llama a la función de confeti
+  confetti({
+    particleCount: 100,
+    spread: 70,
+    origin: { y: 0.6 },
+    target: confettiContainer
+  });
 }
- 
+
+function handleWin(amount) {
+  const winningsElement = document.getElementById('winnings');
+  winningsElement.textContent = `$${amount}`;
+
+  // Mostrar confeti cuando haya un premio
+  showConfetti();
+
+  // Aquí puedes añadir lógica para otras animaciones o efectos
+}
+
+// Ejemplo de uso:
+handleWin(50); // Muestra el premio y el confeti
+
 
 
 // Barajar imágenes de manera aleatoria
