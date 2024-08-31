@@ -745,8 +745,7 @@ button:active {
 <audio id="sound-four" src="https://jackpot-peach.vercel.app/fruit2.mp3"></audio>
 <audio id="sound-five" src="https://jackpot-peach.vercel.app/fruit3.mp3"></audio>
 
-    <!-- Contenedor para el confeti -->
-<div id="confetti-container"></div>
+ 
 
 
 </body>
@@ -1007,14 +1006,13 @@ function updateDisplay(winnings) {
     }
 }
 function showConfetti() {
-      const confettiContainer = document.getElementById('confetti-container');
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-        target: confettiContainer
-      });
-    }
+  confetti({
+    particleCount: 100,
+    spread: 70,
+    origin: { y: 0.6 }
+  });
+}
+
 
     function handleWin(amount) {
       const winningsElement = document.querySelector('.winnings');
