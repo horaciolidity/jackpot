@@ -792,7 +792,7 @@ function drawActiveLines() {
     linePositions.slice(2 - Math.floor((activeLines - 1) / 2), 3 + Math.floor((activeLines - 1) / 2)).forEach((lineIndex) => {
         const line = document.createElement('div');
         line.className = 'active-line';
-        line.style.top = ${lineIndex * lineHeight}%;
+        line.style.top = ${lineIndex * lineHeight};
         linesContainer.appendChild(line);
     });
 }
