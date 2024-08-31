@@ -238,20 +238,41 @@ button:active {
   align-items: center;
 }
 
+/* Estilos base para los botones */
 .decrease-bet, .increase-bet {
+  display: inline-block;
+  padding: 15px 30px; /* Aumenta el tamaño del botón */
+  font-size: 18px; /* Tamaño de fuente más grande */
+  font-weight: bold; /* Fuente en negrita */
+  border-radius: 12px; /* Bordes redondeados */
+  border: 2px solid #ffffff; /* Borde blanco */
+  text-align: center;
+  cursor: pointer;
   transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
+  background: linear-gradient(45deg, #ff4d4d, #e60000); /* Fondo degradado */
+  color: #ffffff; /* Texto blanco */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Sombra para efecto 3D */
 }
 
+/* Estilo al pasar el mouse sobre el botón */
 .decrease-bet:hover, .increase-bet:hover {
   transform: scale(1.1);
-  background: linear-gradient(45deg, #ff4d4d, #e60000);
-  color: #ffffff;
+  background: linear-gradient(45deg, #ff6f6f, #ff3d3d); /* Cambia el degradado al pasar el mouse */
+  color: #ffffff; /* Texto blanco */
 }
 
+/* Estilo cuando el botón está presionado */
 .decrease-bet:active, .increase-bet:active {
   transform: scale(0.9);
-  background: linear-gradient(45deg, #cc0000, #990000);
+  background: linear-gradient(45deg, #cc0000, #990000); /* Degradado más oscuro cuando está presionado */
 }
+
+/* Añade un efecto de enfoque si el botón tiene el foco */
+.decrease-bet:focus, .increase-bet:focus {
+  outline: none; /* Elimina el borde por defecto */
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.6); /* Añade una sombra de enfoque */
+}
+
 .spin {
   width: 150px;
   height: 150px;
