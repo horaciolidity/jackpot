@@ -866,7 +866,10 @@ function startSpinning() {
         const winnings = checkForMatches();
         credit += winnings;
         updateDisplay(winnings);
-
+      
+        if (winnings > 0) {
+        fireConfetti();
+    }
         // Comprobar si el crédito ha llegado a cero después del giro
         if (credit <= 0) {
             setTimeout(checkForReload, 500); // Llamar a la función de recarga después de una pausa
@@ -999,24 +1002,7 @@ function fireConfetti() {
         disableForReducedMotion: true // Desactivar si el usuario ha solicitado reducir el movimiento
     });
 }
-  Promise.all(spinPromises).then(() => {
-    const winnings = checkForMatches();
-    credit += winnings;
-    updateDisplay(winnings);
-
-    // Mostrar confeti si hay ganancias
-    if (winnings > 0) {
-        fireConfetti();
-    }
-
-    // Comprobar si el crédito ha llegado a cero después del giro
-    if (credit <= 0) {
-        setTimeout(checkForReload, 500); // Llamar a la función de recarga después de una pausa
-    }
-});
-
-
-
+ 
 
 
 // Barajar imágenes de manera aleatoria
