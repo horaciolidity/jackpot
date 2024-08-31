@@ -251,17 +251,22 @@ button:active {
   background: linear-gradient(45deg, #cc0000, #990000);
 }
 .spin {
-  width: 150px; /* Mayor tamaño para el botón */
+  width: 150px;
   height: 150px;
-  font-size: 30px;
+  font-size: 24px;
   text-transform: uppercase;
   margin: 0 15px;
-  background: linear-gradient(45deg, #ff0000, #cc0000);
+  background: linear-gradient(135deg, #ff4d4d, #e60000);
   border-radius: 50%;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.8);
   position: relative;
-  transform: perspective(600px) rotateX(15deg) rotateY(-10deg);
-  transition: all 0.3s ease;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-family: 'Orbitron', sans-serif; /* Fuente futurista */
 }
 
 .spin::before {
@@ -269,32 +274,60 @@ button:active {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 60%;
-  height: 10px;
-  background: #333;
-  border-radius: 5px;
-  transform: translate(-50%, -50%) rotate(0deg);
-  transition: transform 0.3s ease;
+  width: 75%;
+  height: 75%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 50%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
   z-index: -1;
+  animation: spinGlow 1.5s infinite alternate;
+}
+
+.spin::after {
+  content: '';
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  width: 80%;
+  height: 80%;
+  background: linear-gradient(45deg, rgba(255, 0, 0, 0.6), rgba(255, 255, 0, 0.6));
+  border-radius: 50%;
+  transform: scale(0);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1;
+}
+
+.spin:hover::after {
+  transform: scale(1);
 }
 
 .spin:hover {
-  background: linear-gradient(45deg, #ff4d4d, #e60000);
-  transform: scale(1.1) perspective(600px) rotateX(10deg) rotateY(-5deg);
+  background: linear-gradient(135deg, #ff4d4d, #cc0000);
+  transform: scale(1.1);
 }
 
 .spin:active {
-  background: linear-gradient(45deg, #cc0000, #990000);
-  transform: scale(1.05) perspective(600px) rotateX(5deg) rotateY(-2deg);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+  background: linear-gradient(135deg, #e60000, #990000);
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
 }
 
-.spin::before {
-  transform: translate(-50%, -50%) rotate(-45deg);
+.spin-text {
+  z-index: 2;
+  position: relative;
+  font-weight: bold;
+  text-shadow: 0 0 5px #fff, 0 0 10px #ff0000;
 }
 
-.spin:active::before {
-  transform: translate(-50%, -50%) rotate(-90deg);
+@keyframes spinGlow {
+  0% {
+    opacity: 0.5;
+    transform: rotate(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(360deg);
+  }
 }
 
 
