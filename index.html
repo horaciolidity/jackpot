@@ -444,8 +444,24 @@ button:active {
 
 
 .credit {
-  font-size: 22px;
-  color: #00ff00; /* Verde brillante para el crédito */
+  font-size: 24px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #ffcc00, #ffdf00, #ffd700, #ffdf00, #ffcc00);
+  background-size: 200% auto;
+  color: #ffd700;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 2s linear infinite;
+}
+
+/* Animación para el efecto brillante */
+@keyframes shine {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
 }
 
 .bet {
