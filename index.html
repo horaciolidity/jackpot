@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.min.js"></script>
+
 
   <title>Wolf Gold Slot Machine</title>
   <style>
@@ -987,6 +989,32 @@ function updateDisplay(winnings) {
         document.getElementById('sound-five').play();
     }
 }
+function fireConfetti() {
+    // Configuración básica del confeti
+    confetti({
+        particleCount: 100, // Cantidad de partículas
+        spread: 70, // Ángulo de dispersión
+        origin: { y: 0.6 }, // Punto de origen
+        colors: ['#bb0000', '#ffffff', '#ff0000', '#ffff00', '#00ff00', '#0000ff'], // Colores de los papelitos
+        disableForReducedMotion: true // Desactivar si el usuario ha solicitado reducir el movimiento
+    });
+}
+  Promise.all(spinPromises).then(() => {
+    const winnings = checkForMatches();
+    credit += winnings;
+    updateDisplay(winnings);
+
+    // Mostrar confeti si hay ganancias
+    if (winnings > 0) {
+        fireConfetti();
+    }
+
+    // Comprobar si el crédito ha llegado a cero después del giro
+    if (credit <= 0) {
+        setTimeout(checkForReload, 500); // Llamar a la función de recarga después de una pausa
+    }
+});
+
 
 
 
