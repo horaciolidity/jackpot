@@ -769,13 +769,13 @@ const numSpins = 20; // Número de veces que cada columna "gira"
 
 // Pagos para diferentes combinaciones
 const payouts = {
-    'https://jackpot-peach.vercel.app/img1.png': { 3: 8, 4: 20, 5: 75 },
+    'https://jackpot-peach.vercel.app/img1.png': { 3: 5, 4: 10, 5: 75 },
     'https://jackpot-peach.vercel.app/img2.png': { 3: 3, 4: 6, 5: 15 },
-    'https://jackpot-peach.vercel.app/img3.png': { 3: 4, 4: 8, 5: 20 },
-    'https://jackpot-peach.vercel.app/img4.png': { 3: 6, 4: 15, 5: 47 },
+    'https://jackpot-peach.vercel.app/img3.png': { 3: 3, 4: 8, 5: 20 },
+    'https://jackpot-peach.vercel.app/img4.png': { 3: 3, 4: 9, 5: 27 },
     'https://jackpot-peach.vercel.app/img5.png': { 3: 2, 4: 4, 5: 10 },
-    'https://jackpot-peach.vercel.app/img6.png': { 3: 5, 4: 13, 5: 36 },
-    'https://jackpot-peach.vercel.app/img7.png': { 3: 4, 4: 10, 5: 28 },
+    'https://jackpot-peach.vercel.app/img6.png': { 3: 4, 4: 8, 5: 16 },
+    'https://jackpot-peach.vercel.app/img7.png': { 3: 2, 4: 7, 5: 18 },
     'https://jackpot-peach.vercel.app/img8.png': { 3: 1, 4: 3, 5: 7 },
 };
 
@@ -852,6 +852,9 @@ function spinReel(reel, numSpins) {
     });
 }
 
+
+
+  
 // Función para iniciar el giro de todas las columnas
 function startSpinning() {
     if (credit < bet) {
@@ -860,7 +863,6 @@ function startSpinning() {
     }
 
     credit -= bet; // Descontar la apuesta del crédito
-
     updateDisplay(0); // Mostrar el crédito actualizado
 
     // Barajar las imágenes de cada columna de manera diferente
@@ -879,9 +881,30 @@ function startSpinning() {
         const winnings = checkForMatches();
         credit += winnings;
         updateDisplay(winnings);
+
+        // Comprobar si el crédito ha llegado a cero después del giro
+        if (credit <= 0) {
+            setTimeout(checkForReload, 500); // Llamar a la función de recarga después de una pausa
+        }
     });
 }
 
+// Función para mostrar y manejar la recarga de crédito
+function checkForReload() {
+    let reload = confirm("Se acabó el crédito. ¿Desea recargar?");
+    if (reload) {
+        credit = 10;  // Recargar el crédito a su valor inicial
+        alert("Crédito recargado. ¡Buena suerte!");
+        updateDisplay(0); // Actualizar la pantalla con el crédito recargado
+    } else {
+        alert("Gracias por jugar. Vuelve pronto.");
+        // Aquí puedes desactivar botones u otros elementos si lo deseas
+    }
+}
+
+
+
+  
 // Función para obtener las imágenes de cada fila
 function getLineImages() {
     const imagesMatrix = [];
