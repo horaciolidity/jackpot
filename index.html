@@ -391,15 +391,8 @@ button:active {
   text-shadow: 0 0 5px #00ff99, 0 0 10px #00ff99; /* Efecto de neón */
 }
 
-.credit {
-  font-size: 24px;
-  color: #00ff00; /* Verde brillante para el crédito */
-}
 
-.bet {
-  font-size: 24px;
-  color: #ff6f00; /* Naranja neón para la apuesta */
-}
+
 
 .winnings {
   font-size: 26px;
@@ -463,14 +456,13 @@ button:active {
 .bet {
   font-size: 24px;
   font-weight: bold;
-  transition: all 0.5s ease;
+  transition: all 1s ease; /* Transición más lenta */
 }
 
 .bet.explode {
-  animation: bloodExplosion 0.6s forwards;
+  animation: bloodExplosion 1.2s forwards; /* Animación más lenta */
 }
 
-/* Animación para el efecto de explosión */
 @keyframes bloodExplosion {
   0% {
     color: #ff0000; /* Rojo intenso */
@@ -479,55 +471,15 @@ button:active {
   }
   50% {
     color: #800000; /* Rojo oscuro */
-    transform: scale(1.5);
-    opacity: 0.5;
+    transform: scale(1.8);
+    opacity: 0.7;
   }
   100% {
     color: transparent; /* Invisible al final */
-    transform: scale(2);
+    transform: scale(2.5);
     opacity: 0;
   }
 }
-
-
-.winnings {
-  font-size: 24px;
-  color: #ff0000; /* Rojo brillante para las ganancias */
-  margin-top: 10px;
-  position: relative;
-  animation: flash 1s ease-out, scaleUpDown 1s ease-in-out;
-}
-
-@keyframes flash {
-  0% {
-    color: #ff0000;
-    text-shadow: 1px 1px 5px #ffff00;
-  }
-  50% {
-    color: #ffd700;
-    text-shadow: 1px 1px 15px #ff0000;
-  }
-  100% {
-    color: #ff0000;
-    text-shadow: 1px 1px 5px #ffff00;
-  }
-}
-
-@keyframes scaleUpDown {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.5);
-  }
-}
-
-.winnings-highlight {
-  font-size: 28px;
-  color: #ff4500; /* Naranja brillante para resaltar las ganancias */
-  animation: flash 1s ease-out, scaleUpDown 1s ease-in-out;
-}
-
 
    
 .reel img.highlight {
@@ -619,26 +571,6 @@ button:active {
   75% {
     opacity: 1;
     transform: scale(1.2);
-  }
-}
-
-.winnings {
-  font-size: 24px; /* Tamaño de fuente más grande */
-  font-weight: bold;
-  margin: 10px 0;
-  animation: ambulanceLight 1s infinite alternate; /* Animación para alternar el color */
-}
-
-/* Animación para simular el efecto de una linterna de ambulancia */
-@keyframes ambulanceLight {
-  0% {
-    color: #ff0000; /* Rojo */
-  }
-  50% {
-    color: #0000ff; /* Azul */
-  }
-  100% {
-    color: #ff0000; /* Rojo */
   }
 }
 
@@ -1056,24 +988,6 @@ function updateDisplay(winnings) {
     }
 }
 
-
-  function triggerBetExplosion() {
-    const betElement = document.querySelector('.bet');
-
-    // Añadir la clase para la explosión
-    betElement.classList.add('explode');
-
-    // Esperar el final de la animación antes de remover la clase y actualizar el saldo
-    betElement.addEventListener('animationend', () => {
-        betElement.classList.remove('explode');
-        
-        // Aquí actualizas el texto con el saldo actual
-        betElement.textContent = `Bet: $${newBetValue}`;
-    }, { once: true });
-}
-
-// Ejemplo de uso después de descontar el saldo
-triggerBetExplosion();
 
 
 
