@@ -926,6 +926,7 @@ function checkForMatches() {
                 totalWinnings += payouts[symbol][count] * (bet / activeLines);
                 matchedSymbols[symbol] = matchedSymbols[symbol] || [];
                 matchedSymbols[symbol].push(lineIndex);
+                playSound(count);
             }
         });
     });
@@ -972,6 +973,16 @@ function updateDisplay(winnings) {
         }, 1000); // Duración de la animación
     }
 }
+  function playSound(matches) {
+    if (matches === 3) {
+        document.getElementById('sound-three').play();
+    } else if (matches === 4) {
+        document.getElementById('sound-four').play();
+    } else if (matches === 5) {
+        document.getElementById('sound-five').play();
+    }
+}
+
 
 // Barajar imágenes de manera aleatoria
 function shuffle(array) {
