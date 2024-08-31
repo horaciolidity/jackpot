@@ -1005,16 +1005,17 @@ function updateDisplay(winnings) {
         document.getElementById('sound-five').play();
     }
 }
-function showConfetti() {
-  confetti({
-    particleCount: 100,
-    spread: 70,
-    origin: { y: 0.6 }
-  });
-}
+ function showConfetti() {
+      console.log('Mostrando confeti'); // Mensaje de depuración
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+    }
 
-
-  function handleWin(amount) {
+    function handleWin(amount) {
+      console.log('handleWin llamado con cantidad:', amount); // Mensaje de depuración
       const winningsElement = document.querySelector('.winnings');
       if (winningsElement) {
         winningsElement.textContent = `Ganancias: $${amount}`;
@@ -1024,8 +1025,8 @@ function showConfetti() {
       }
     }
 
-    // Ejemplo de uso
-    handleWin(50);
+    // Prueba la función handleWin después de 2 segundos
+    setTimeout(() => handleWin(50), 2000);
 
 
 // Barajar imágenes de manera aleatoria
