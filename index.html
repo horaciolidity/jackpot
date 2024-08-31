@@ -287,11 +287,78 @@ button:active {
   font-size: 18px;
   margin: 5px 0;
 }
-    .balance-bet {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
+
+   
+    /* Estilos para el contenedor de balance y apuesta */
+.balance-bet {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    padding: 10px;
+    background: #333;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Estilos para cada elemento dentro del contenedor */
+.balance-bet span,
+.balance-bet .winnings {
+    margin: 5px 0;
+    font-size: 1.2em;
+    text-align: center;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+/* Animaciones para los premios */
+.balance-bet .highlight {
+    color: #FFD700; /* Dorado para los premios */
+    font-weight: bold;
+    transform: scale(1.2);
+    transition: transform 0.5s ease, color 0.5s ease;
+}
+
+/* Cuando hay un premio */
+.balance-bet .highlight-twice {
+    animation: highlight 1s ease-out;
+}
+
+@keyframes highlight {
+    0% {
+        transform: scale(1.2);
     }
+    50% {
+        transform: scale(1.5);
+        color: #FFD700; /* Dorado para destacar el premio */
+    }
+    100% {
+        transform: scale(1);
+        color: #fff; /* Color original */
+    }
+}
+
+/* Estilos adicionales para la animación de premios */
+.balance-bet .winnings.highlight {
+    animation: winnings-animation 1s ease;
+}
+
+@keyframes winnings-animation {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+        color: #FFD700;
+    }
+    100% {
+        transform: scale(1);
+        color: #fff;
+    }
+}
+
+   
 .reel img.highlight {
   border: 2px solid #ff0000; /* Color de borde para resaltar */
   animation: highlightAnimation 1s ease-in-out;
@@ -743,8 +810,18 @@ function highlightMatch(lineIndex, symbol) {
 function updateDisplay(winnings) {
     creditDisplay.textContent = `Crédito: $${credit}`;
     betDisplay.textContent = `Apuesta: $${bet}`;
+
     winningsDisplay.textContent = `Ganancias: $${winnings}`;
+    
+    // Resalta las ganancias si hay premio
+    if (winnings > 0) {
+        winningsDisplay.classList.add('highlight');
+        setTimeout(() => {
+            winningsDisplay.classList.remove('highlight');
+        }, 1000); // Duración de la animación
+    }
 }
+
 
 // Barajar imágenes de manera aleatoria
 function shuffle(array) {
