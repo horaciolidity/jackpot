@@ -42,7 +42,7 @@
     }
 
     h1.game-title {
-      font-size: 6vw;
+      font-size: 8vw;
       margin: 0 0 10px 0;
       text-shadow: 2px 2px 4px #000000, 0 0 10px #ffd700;
       color: #ffffff;
@@ -68,6 +68,8 @@
       margin-top: 10px;
       background: transparent;
       padding: 10px;
+      flex-direction: column; /* Alineación vertical en dispositivos móviles */
+
     }
 
     .jackpot {
@@ -78,7 +80,7 @@
       font-weight: bold;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       flex-grow: 1;
-      margin: 0;
+      margin: 10px 0; /* Margen vertical en lugar de horizontal */
       position: relative;
       overflow: hidden;
     }
@@ -123,8 +125,10 @@
   padding: 10px;
   position: relative;
   overflow: hidden;
-  width: 500px; /* Asegura un ancho fijo para la máquina tragamonedas */
-  height: 500px; /* Altura fija para mostrar 5 imágenes */
+  width: 100%; /* Cambiado a 100% para que ocupe el ancho disponible */
+  max-width: 500px; /* Mantener un ancho máximo en pantallas grandes */
+  height: auto; /* Altura automática para permitir un ajuste dinámico */
+  aspect-ratio: 1; /* Mantener una proporción de 1:1 */
   display: flex;
   justify-content: center;
   align-items: center;
