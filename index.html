@@ -715,12 +715,12 @@ function checkForMatches() {
 // Función para resaltar las coincidencias en la línea
 function highlightMatch(lineIndex, symbol) {
     // Recorremos todas las columnas, resaltamos solo las imágenes en la línea activa
-    reels.forEach((reel, idx) => {
+    reels.forEach(reel => {
         const img = reel.querySelectorAll('img')[lineIndex];
         if (img.src === symbol) {
             img.classList.add('highlight'); // Resalta la imagen coincidente
             setTimeout(() => img.classList.remove('highlight'), 500); // Elimina el resaltado después de un tiempo
-            setTimeout(() => img.classList.add('highlight-twice'), 500); // Resalta dos veces
+            setTimeout(() => img.classList.add('highlight-twice'), 500); // Agranda dos veces
         } else {
             img.classList.remove('highlight');
             img.classList.remove('highlight-twice');
@@ -734,22 +734,6 @@ function updateDisplay(winnings) {
     betDisplay.textContent = `Apuesta: $${bet}`;
     winningsDisplay.textContent = `Ganancias: $${winnings}`;
 }
- // Función para resaltar las coincidencias en la línea
-function highlightMatch(lineIndex, symbol) {
-    // Recorremos todas las columnas, resaltamos solo las imágenes en la línea activa
-    reels.forEach((reel, idx) => {
-        const img = reel.querySelectorAll('img')[lineIndex];
-        if (img.src === symbol) {
-            img.classList.add('highlight'); // Resalta la imagen coincidente
-            setTimeout(() => img.classList.remove('highlight'), 500); // Elimina el resaltado después de un tiempo
-            setTimeout(() => img.classList.add('highlight-twice'), 500); // Agranda dos veces
-        } else {
-            img.classList.remove('highlight');
-            img.classList.remove('highlight-twice');
-        }
-    });
-}
-
 
 // Barajar imágenes de manera aleatoria
 function shuffle(array) {
