@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 
   <title>Wolf Gold Slot Machine</title>
@@ -41,7 +42,7 @@
     }
 
     h1.game-title {
-      font-size: 8vw;
+      font-size: 6vw;
       margin: 0 0 10px 0;
       text-shadow: 2px 2px 4px #000000, 0 0 10px #ffd700;
       color: #ffffff;
@@ -67,7 +68,6 @@
       margin-top: 10px;
       background: transparent;
       padding: 10px;
-
     }
 
     .jackpot {
@@ -78,7 +78,7 @@
       font-weight: bold;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       flex-grow: 1;
-      margin: 0; /* Margen vertical en lugar de horizontal */
+      margin: 0;
       position: relative;
       overflow: hidden;
     }
@@ -123,10 +123,8 @@
   padding: 10px;
   position: relative;
   overflow: hidden;
-  width: 100%; /* Cambiado a 100% para que ocupe el ancho disponible */
-  max-width: 500px; /* Mantener un ancho máximo en pantallas grandes */
-  height: auto; /* Altura automática para permitir un ajuste dinámico */
-  aspect-ratio: 1; /* Mantener una proporción de 1:1 */
+  width: 500px; /* Asegura un ancho fijo para la máquina tragamonedas */
+  height: 500px; /* Altura fija para mostrar 5 imágenes */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -238,41 +236,20 @@ button:active {
   align-items: center;
 }
 
-/* Estilos base para los botones */
 .decrease-bet, .increase-bet {
-  display: inline-block;
-  padding: 15px 30px; /* Aumenta el tamaño del botón */
-  font-size: 18px; /* Tamaño de fuente más grande */
-  font-weight: bold; /* Fuente en negrita */
-  border-radius: 12px; /* Bordes redondeados */
-  border: 2px solid #ffffff; /* Borde blanco */
-  text-align: center;
-  cursor: pointer;
   transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
-  background: linear-gradient(45deg, #ff4d4d, #e60000); /* Fondo degradado */
-  color: #ffffff; /* Texto blanco */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Sombra para efecto 3D */
 }
 
-/* Estilo al pasar el mouse sobre el botón */
 .decrease-bet:hover, .increase-bet:hover {
   transform: scale(1.1);
-  background: linear-gradient(45deg, #ff6f6f, #ff3d3d); /* Cambia el degradado al pasar el mouse */
-  color: #ffffff; /* Texto blanco */
+  background: linear-gradient(45deg, #ff4d4d, #e60000);
+  color: #ffffff;
 }
 
-/* Estilo cuando el botón está presionado */
 .decrease-bet:active, .increase-bet:active {
   transform: scale(0.9);
-  background: linear-gradient(45deg, #cc0000, #990000); /* Degradado más oscuro cuando está presionado */
+  background: linear-gradient(45deg, #cc0000, #990000);
 }
-
-/* Añade un efecto de enfoque si el botón tiene el foco */
-.decrease-bet:focus, .increase-bet:focus {
-  outline: none; /* Elimina el borde por defecto */
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.6); /* Añade una sombra de enfoque */
-}
-
 .spin {
   width: 150px;
   height: 150px;
@@ -759,9 +736,6 @@ const betDisplay = document.querySelector('.bet');
 const winningsDisplay = document.querySelector('.winnings');
 const increaseBetButton = document.querySelector('.increase-bet');
 const decreaseBetButton = document.querySelector('.decrease-bet');
-const winSound3 = document.getElementById('winSound3');
-const winSound4 = document.getElementById('winSound4');
-const winSound5 = document.getElementById('winSound5');
 
 let credit = 20; // Crédito inicial
 let bet = 2; // Apuesta por giro
@@ -782,22 +756,6 @@ const payouts = {
     'https://jackpot-peach.vercel.app/img8.png': { 3: 1, 4: 3, 5: 7 },
 };
 
-// Ajustar volumen de los sonidos
-winSound3.volume = 1.0;
-winSound4.volume = 1.0;
-winSound5.volume = 1.0;
-
-// Función para reproducir el sonido correspondiente
-function playWinSound(count) {
-    if (count === 3) {
-        winSound3.play();
-    } else if (count === 4) {
-        winSound4.play();
-    } else if (count === 5) {
-        winSound5.play();
-    }
-}
-
 // Función para dibujar las líneas activas
 function drawActiveLines() {
     const linesContainer = document.querySelector('.lines-container');
@@ -805,12 +763,13 @@ function drawActiveLines() {
 
     const lineHeight = 100 / 5; // Altura en porcentaje para cada fila
 
+    // Array con posiciones de las líneas
     const linePositions = [0, 1, 2, 3, 4];
 
     linePositions.slice(2 - Math.floor((activeLines - 1) / 2), 3 + Math.floor((activeLines - 1) / 2)).forEach((lineIndex) => {
         const line = document.createElement('div');
         line.className = 'active-line';
-        line.style.top = `${lineIndex * lineHeight}%`;
+        line.style.top = ${lineIndex * lineHeight}%;
         linesContainer.appendChild(line);
     });
 }
@@ -897,9 +856,6 @@ function startSpinning() {
         const winnings = checkForMatches();
         credit += winnings;
         updateDisplay(winnings);
-        if (winnings > 0) {
-            playWinSound(winnings / (bet / activeLines)); // Llamar al sonido correspondiente
-        }
     });
 }
 
@@ -979,9 +935,10 @@ function highlightMatch(lineIndex, symbol) {
 
 // Función para actualizar la pantalla
 function updateDisplay(winnings) {
-    creditDisplay.textContent = `Crédito: $${credit}`;
-    betDisplay.textContent = `Apuesta: $${bet}`;
-    winningsDisplay.textContent = `Ganancias: $${winnings}`;
+    creditDisplay.textContent = Crédito: $${credit};
+    betDisplay.textContent = Apuesta: $${bet};
+
+    winningsDisplay.textContent = Ganancias: $${winnings};
     
     // Resalta las ganancias si hay premio
     if (winnings > 0) {
@@ -991,6 +948,7 @@ function updateDisplay(winnings) {
         }, 1000); // Duración de la animación
     }
 }
+
 
 // Barajar imágenes de manera aleatoria
 function shuffle(array) {
@@ -1005,6 +963,7 @@ spinButton.addEventListener('click', startSpinning);
 
 // Inicializar la visualización de apuestas y líneas
 updateBet();
+
 
 </script>
 
