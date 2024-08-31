@@ -443,31 +443,52 @@ button:active {
 }
 
 
-.credit {
+.credit-value {
   font-size: 24px;
   font-weight: bold;
-  background: linear-gradient(90deg, #ffcc00, #ffdf00, #ffd700, #ffdf00, #ffcc00);
-  background-size: 200% auto;
-  color: #ffd700;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shine 2s linear infinite;
+  animation: ambulanceEffect 1s infinite alternate;
 }
 
-/* Animación para el efecto brillante */
-@keyframes shine {
+/* Animación para el efecto de ambulancia */
+@keyframes ambulanceEffect {
   0% {
-    background-position: 200% center;
+    color: #ffcc00; /* Amarillo */
   }
   100% {
-    background-position: -200% center;
+    color: #ff0000; /* Rojo */
   }
 }
 
+
 .bet {
-  font-size: 22px;
-  color: #ff4500; /* Naranja brillante para la apuesta */
+  font-size: 24px;
+  font-weight: bold;
+  transition: all 0.5s ease;
 }
+
+.bet.explode {
+  animation: bloodExplosion 0.6s forwards;
+}
+
+/* Animación para el efecto de explosión */
+@keyframes bloodExplosion {
+  0% {
+    color: #ff0000; /* Rojo intenso */
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    color: #800000; /* Rojo oscuro */
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+  100% {
+    color: transparent; /* Invisible al final */
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
 
 .winnings {
   font-size: 24px;
@@ -771,8 +792,8 @@ button:active {
       </div>
     </footer>
      <div class="balance-bet">
-            <span class="credit">Credit: $10 free</span>
-            <span class="bet">Bet: $2</span>
+<span class="credit">Credit: <span class="credit-value">$10 free</span></span>
+<span class="bet">Bet: $2</span>
     <div class="winnings">Ganancias: 0</div>
   </div>
 
@@ -1034,6 +1055,26 @@ function updateDisplay(winnings) {
         document.getElementById('sound-five').play();
     }
 }
+
+
+  function triggerBetExplosion() {
+    const betElement = document.querySelector('.bet');
+
+    // Añadir la clase para la explosión
+    betElement.classList.add('explode');
+
+    // Esperar el final de la animación antes de remover la clase y actualizar el saldo
+    betElement.addEventListener('animationend', () => {
+        betElement.classList.remove('explode');
+        
+        // Aquí actualizas el texto con el saldo actual
+        betElement.textContent = `Bet: $${newBetValue}`;
+    }, { once: true });
+}
+
+// Ejemplo de uso después de descontar el saldo
+triggerBetExplosion();
+
 
 
 // Barajar imágenes de manera aleatoria
