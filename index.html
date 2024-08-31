@@ -585,12 +585,26 @@ button:active {
   }
 }
 
- .winnings {
-  color: #ffd700;
+.winnings {
+  font-size: 24px; /* Tamaño de fuente más grande */
   font-weight: bold;
-  font-size: 18px;
-  margin: 5px 0;
+  margin: 10px 0;
+  animation: ambulanceLight 1s infinite alternate; /* Animación para alternar el color */
 }
+
+/* Animación para simular el efecto de una linterna de ambulancia */
+@keyframes ambulanceLight {
+  0% {
+    color: #ff0000; /* Rojo */
+  }
+  50% {
+    color: #0000ff; /* Azul */
+  }
+  100% {
+    color: #ff0000; /* Rojo */
+  }
+}
+
 
 .lines-container {
   position: absolute;
