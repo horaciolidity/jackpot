@@ -4,6 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
   <title>Wolf Gold Slot Machine</title>
   <style>
     body {
@@ -288,29 +290,81 @@ button:active {
   margin: 5px 0;
 }
 
-   
 .balance-bet {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid #ffd700;
-  border-radius: 10px;
-  padding: 15px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  background: rgba(20, 20, 20, 0.9); /* Fondo oscuro con opacidad */
+  border: 2px solid #00ff99; /* Color de borde verde neón */
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(0, 255, 255, 0.6); /* Sombra de neón */
   position: relative;
   overflow: hidden;
   margin: 20px 0;
-  width: 250px;
+  width: 280px;
+  font-family: 'Orbitron', sans-serif; /* Fuente futurista */
 }
 
 .balance-bet span {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: bold;
-  color: #ffd700;
-  margin: 5px 0;
-  text-shadow: 1px 1px 2px #000000;
+  color: #00ff99; /* Verde neón para el texto */
+  margin: 8px 0;
+  text-shadow: 0 0 5px #00ff99, 0 0 10px #00ff99; /* Efecto de neón */
 }
+
+.credit {
+  font-size: 24px;
+  color: #00ff00; /* Verde brillante para el crédito */
+}
+
+.bet {
+  font-size: 24px;
+  color: #ff6f00; /* Naranja neón para la apuesta */
+}
+
+.winnings {
+  font-size: 26px;
+  color: #ff3333; /* Rojo brillante para las ganancias */
+  margin-top: 12px;
+  position: relative;
+  animation: flash 1.5s ease-in-out, scaleUpDown 1.5s ease-in-out;
+  background: linear-gradient(45deg, rgba(255,0,0,0.5), rgba(255,255,0,0.5));
+  border-radius: 10px;
+  padding: 10px;
+}
+
+@keyframes flash {
+  0% {
+    color: #ff3333;
+    text-shadow: 0 0 10px #ffff00;
+  }
+  50% {
+    color: #ffff00;
+    text-shadow: 0 0 20px #ff3333;
+  }
+  100% {
+    color: #ff3333;
+    text-shadow: 0 0 10px #ffff00;
+  }
+}
+
+@keyframes scaleUpDown {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.8);
+  }
+}
+
+.winnings-highlight {
+  font-size: 30px;
+  color: #ff4500; /* Naranja brillante para resaltar las ganancias */
+  animation: flash 1.5s ease-in-out, scaleUpDown 1.5s ease-in-out;
+}
+
 
 .credit {
   font-size: 22px;
