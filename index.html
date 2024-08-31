@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.min.js"></script>
 
 
   <title>Wolf Gold Slot Machine</title>
@@ -751,6 +750,8 @@ button:active {
 
 
 </body>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+
 <script>
 const reels = document.querySelectorAll('.reel');
 const spinButton = document.querySelector('.spin');
@@ -1006,31 +1007,27 @@ function updateDisplay(winnings) {
     }
 }
 function showConfetti() {
-  // Configura el contenedor del confeti
-  const confettiContainer = document.getElementById('confetti-container');
+      const confettiContainer = document.getElementById('confetti-container');
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        target: confettiContainer
+      });
+    }
 
-  // Llama a la función de confeti
-  confetti({
-    particleCount: 100,
-    spread: 70,
-    origin: { y: 0.6 },
-    target: confettiContainer
-  });
-}
+    function handleWin(amount) {
+      const winningsElement = document.querySelector('.winnings');
+      if (winningsElement) {
+        winningsElement.textContent = `Ganancias: $${amount}`;
+        showConfetti();
+      } else {
+        console.error('Elemento con clase "winnings" no encontrado.');
+      }
+    }
 
-function handleWin(amount) {
-  const winningsElement = document.getElementById('winnings');
-  winningsElement.textContent = `$${amount}`;
-
-  // Mostrar confeti cuando haya un premio
-  showConfetti();
-
-  // Aquí puedes añadir lógica para otras animaciones o efectos
-}
-
-// Ejemplo de uso:
-handleWin(50); // Muestra el premio y el confeti
-
+    // Ejemplo de uso
+    handleWin(50);
 
 
 // Barajar imágenes de manera aleatoria
