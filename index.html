@@ -682,6 +682,7 @@ function getLineImages() {
 function checkForMatches() {
     const lineImages = getLineImages();
     let totalWinnings = 0;
+    const matchedSymbols = {};
 
     // Líneas a verificar basadas en las líneas activas
     const linesToCheck = {
@@ -705,6 +706,8 @@ function checkForMatches() {
             if (count >= 3 && payouts[symbol] && payouts[symbol][count]) {
                 highlightMatch(lineIndex, symbol);
                 totalWinnings += payouts[symbol][count] * (bet / activeLines);
+                matchedSymbols[symbol] = matchedSymbols[symbol] || [];
+                matchedSymbols[symbol].push(lineIndex);
             }
         });
     });
@@ -715,17 +718,25 @@ function checkForMatches() {
 // Función para resaltar las coincidencias en la línea
 function highlightMatch(lineIndex, symbol) {
     // Recorremos todas las columnas, resaltamos solo las imágenes en la línea activa
-    reels.forEach(reel => {
+    reels.forEach((reel, idx) => {
         const img = reel.querySelectorAll('img')[lineIndex];
         if (img.src === symbol) {
             img.classList.add('highlight'); // Resalta la imagen coincidente
-            setTimeout(() => img.classList.remove('highlight'), 500); // Elimina el resaltado después de un tiempo
-            setTimeout(() => img.classList.add('highlight-twice'), 500); // Agranda dos veces
         } else {
             img.classList.remove('highlight');
-            img.classList.remove('highlight-twice');
         }
     });
+
+    // Asegura que solo se agranden las imágenes de las coincidencias y se mantengan fijas después
+    setTimeout(() => {
+        reels.forEach((reel, idx) => {
+            const img = reel.querySelectorAll('img')[lineIndex];
+            if (img.src === symbol) {
+                img.classList.add('highlight-twice'); // Agranda las imágenes coincididas
+                setTimeout(() => img.classList.remove('highlight-twice'), 1000); // Elimina el agrandamiento después de 1 segundo
+            }
+        });
+    }, 500);
 }
 
 // Función para actualizar la pantalla
@@ -748,6 +759,7 @@ spinButton.addEventListener('click', startSpinning);
 
 // Inicializar la visualización de apuestas y líneas
 updateBet();
+
 
 </script>
 
