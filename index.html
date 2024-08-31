@@ -289,74 +289,77 @@ button:active {
 }
 
    
-    /* Estilos para el contenedor de balance y apuesta */
 .balance-bet {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 20px;
-    padding: 10px;
-    background: #333;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    color: #fff;
-    font-family: 'Arial', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid #ffd700;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+  margin: 20px 0;
+  width: 250px;
 }
 
-/* Estilos para cada elemento dentro del contenedor */
-.balance-bet span,
-.balance-bet .winnings {
-    margin: 5px 0;
-    font-size: 1.2em;
-    text-align: center;
-    transition: transform 0.3s ease, color 0.3s ease;
+.balance-bet span {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ffd700;
+  margin: 5px 0;
+  text-shadow: 1px 1px 2px #000000;
 }
 
-/* Animaciones para los premios */
-.balance-bet .highlight {
-    color: #FFD700; /* Dorado para los premios */
-    font-weight: bold;
-    transform: scale(1.2);
-    transition: transform 0.5s ease, color 0.5s ease;
+.credit {
+  font-size: 22px;
+  color: #00ff00; /* Verde brillante para el crédito */
 }
 
-/* Cuando hay un premio */
-.balance-bet .highlight-twice {
-    animation: highlight 1s ease-out;
+.bet {
+  font-size: 22px;
+  color: #ff4500; /* Naranja brillante para la apuesta */
 }
 
-@keyframes highlight {
-    0% {
-        transform: scale(1.2);
-    }
-    50% {
-        transform: scale(1.5);
-        color: #FFD700; /* Dorado para destacar el premio */
-    }
-    100% {
-        transform: scale(1);
-        color: #fff; /* Color original */
-    }
+.winnings {
+  font-size: 24px;
+  color: #ff0000; /* Rojo brillante para las ganancias */
+  margin-top: 10px;
+  position: relative;
+  animation: flash 1s ease-out, scaleUpDown 1s ease-in-out;
 }
 
-/* Estilos adicionales para la animación de premios */
-.balance-bet .winnings.highlight {
-    animation: winnings-animation 1s ease;
+@keyframes flash {
+  0% {
+    color: #ff0000;
+    text-shadow: 1px 1px 5px #ffff00;
+  }
+  50% {
+    color: #ffd700;
+    text-shadow: 1px 1px 15px #ff0000;
+  }
+  100% {
+    color: #ff0000;
+    text-shadow: 1px 1px 5px #ffff00;
+  }
 }
 
-@keyframes winnings-animation {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
-        color: #FFD700;
-    }
-    100% {
-        transform: scale(1);
-        color: #fff;
-    }
+@keyframes scaleUpDown {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
 }
+
+.winnings-highlight {
+  font-size: 28px;
+  color: #ff4500; /* Naranja brillante para resaltar las ganancias */
+  animation: flash 1s ease-out, scaleUpDown 1s ease-in-out;
+}
+
 
    
 .reel img.highlight {
