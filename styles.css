@@ -628,3 +628,66 @@ button:active {
   overflow: hidden;
   z-index: 9999; /* Asegúrate de que esté por encima de otros elementos */
 }
+/* Contenedor centrado */
+.ciberpunk-container {
+    text-align: center;
+}
+
+/* Estilo del botón */
+.ciberpunk-button {
+    background: linear-gradient(135deg, #ff004d, #00e0ff);
+    border: 2px solid #ff004d;
+    color: #ffffff;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-radius: 5px;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.4s ease-in-out;
+    box-shadow: 0 0 15px rgba(255, 0, 77, 0.6), 0 0 25px rgba(0, 224, 255, 0.7);
+}
+
+/* Transición hover: efectos de color y animación */
+.ciberpunk-button:hover {
+    background: linear-gradient(135deg, #00e0ff, #ff004d);
+    border-color: #00e0ff;
+    box-shadow: 0 0 20px rgba(0, 224, 255, 0.8), 0 0 30px rgba(255, 0, 77, 0.8);
+    transform: scale(1.05);
+}
+
+/* Efectos antes y después para líneas estilo ciberpunk */
+.ciberpunk-button::before,
+.ciberpunk-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid transparent;
+    transition: all 0.4s ease-in-out;
+}
+
+.ciberpunk-button::before {
+    border-top-color: #ff004d;
+    border-right-color: #ff004d;
+    transform: translate(-10px, -10px);
+}
+
+.ciberpunk-button::after {
+    border-bottom-color: #00e0ff;
+    border-left-color: #00e0ff;
+    transform: translate(10px, 10px);
+}
+
+.ciberpunk-button:hover::before {
+    transform: translate(0, 0);
+}
+
+.ciberpunk-button:hover::after {
+    transform: translate(0, 0);
+}
