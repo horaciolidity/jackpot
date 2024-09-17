@@ -631,6 +631,9 @@ button:active {
 /* Contenedor centrado */
 .ciberpunk-container {
     text-align: center;
+    position: fixed;
+    top: 20px;
+    right: 20px;
 }
 
 /* Estilo del botón */
