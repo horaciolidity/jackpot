@@ -262,7 +262,7 @@ function updateDisplay(winnings) {
 
     function handleWin(amount) {
       console.log('handleWin llamado con cantidad:', amount); // Mensaje de depuración
-      const winningsElement = document.querySelector('winnings');
+      const winningsElement = document.querySelector('.winnings');
       if (winningsElement) {
         winningsElement.textContent = `Ganancias: $${amount}`;
         showConfetti();
